@@ -6,23 +6,30 @@ import argparse
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from zylo_docs.integration import mount_zylo_docs
 
-app = FastAPI(
-    title="Zylo Docs",
-    description="The world's best API docs for developers",
-    version="0.1.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-)
+def create_app():
+    app = FastAPI(
+        title="Zylo Docs",
+        description="The world's best API docs for developers",
+        version="0.1.0",
+        docs_url="/docs",
+        redoc_url="/redoc",
+    )
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    # Add CORS middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    mount_zylo_docs(app)
+    return app
+
+app = create_app()
 
 @app.get("/")
 async def root():
