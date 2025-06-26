@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Get the path to the static HTML file
 STATIC_DIR = Path(__file__).parent / "static"
-ZYLO_HTML = STATIC_DIR / "zylo-docs.html"
+ZYLO_HTML = STATIC_DIR / "index.html"
 
 def create_zylo_router():
     """Create a router for zylo-docs."""
