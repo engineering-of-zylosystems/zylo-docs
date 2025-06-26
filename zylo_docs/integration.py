@@ -14,7 +14,7 @@ def create_zylo_router():
     """Create a router for zylo-docs."""
     router = APIRouter()
     
-    @router.get("/zylo")
+    @router.get("/zylo", include_in_schema=False)
     async def zylo_ui():
         """Serve the Zylo Docs UI."""
         if ZYLO_HTML.exists():
