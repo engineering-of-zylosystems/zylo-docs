@@ -4,6 +4,7 @@ Simple integration module for zylo-docs.
 
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 # Get the path to the static HTML file
@@ -32,6 +33,14 @@ def mount_zylo_docs(app):
     """
     router = create_zylo_router()
     app.include_router(router)
+    
+    # Mount static files using StaticFiles
+    try:
+        app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    except Exception as e:
+        print(f"Warning: Could not mount static files: {e}")
+    
     print("🚀 Zylo Docs mounted at: /zylo")
     print("📖 UI available at: /zylo")
-    print("📋 OpenAPI spec available at: /openapi.json") 
+    print("📋 OpenAPI spec available at: /openapi.json")
+    print("📁 Static files available at: /static/") 
