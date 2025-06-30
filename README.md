@@ -36,7 +36,7 @@ poetry install
    만약 vscode가 자동으로 가상환경을 찾아서 등록해야 하는 작업을 해주면 된다
 
 **poetry 실행 명령어**
-`poetry run uvicorn zylo-docs.main:app --port 8001 --reload`
+```poetry run uvicorn zylo-docs.main:app --port 8001 --reload```
 
 ## Installation
 
