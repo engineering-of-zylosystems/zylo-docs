@@ -14,8 +14,12 @@ dependencies = [
     "click (>=8.2.1,<9.0.0)"
 ]
 [tool.poetry]
-packages = [{include = "./zylo_docs"}]
+packages = [{include = "./app"}]
+
+[tool.poetry.scripts]
+"run_zylo_docs" = "app.cli:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
