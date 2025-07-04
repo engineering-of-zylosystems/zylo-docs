@@ -1,6 +1,6 @@
 [project]
 name = "zylo-docs"
-version = "0.1.0"
+version = "0.1.6"
 description = ""
 authors = [
     {name = "lee gyu yeol-mac",email = "i1004gy@gmail.com"}
@@ -8,14 +8,18 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "fastapi (>=0.115.14,<0.116.0)",
-    "uvicorn[standard] (>=0.35.0,<0.36.0)",
-    "httpx (>=0.28.1,<0.29.0)",
-    "click (>=8.2.1,<9.0.0)"
+   "fastapi (>=0.115.10,<0.116.0)",
+    "uvicorn[standard] (>=0.34.0,<0.36.0)",
+    "httpx (>=0.27.1,<0.29.0)",
+    "click (>=8.1.3,<9.0.0)"
 ]
 [tool.poetry]
 packages = [{include = "./zylo_docs"}]
 
+[tool.poetry.scripts]
+"run_zylo_docs" = "zylo_docs.cli:main"
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
