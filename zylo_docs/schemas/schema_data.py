@@ -1,12 +1,14 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any
-
-SchemaMap = Dict[str, Any]  # 실제 schema json 구조 그대로 받을 경우
-
-class SchemaData(BaseModel):
-    details: List[SchemaMap]  # 각 schema의 상세 정보 리스트
+from typing import Any, Dict, Optional
 
 class SchemaResponseModel(BaseModel):
     success: bool
     message: str
-    data: SchemaData
+    data: Any
+
+class APIRequestModel(BaseModel):
+    method: str
+    url: str
+    path_params: Optional[Dict[str, Any]] = None
+    query_params: Optional[Dict[str, Any]] = None
+    body: Optional[Dict[str, Any]] = None
