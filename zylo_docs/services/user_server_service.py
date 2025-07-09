@@ -37,6 +37,33 @@ async def get_user_schemas():
         return None
     
     return schemas
+def parse_openapi_paths(paths):
+    grouped = defaultdict(list)
+
+    for path, methods in paths.items():
+        for method, info in methods.items():
+            tag = (info.get("tags") or ["default"])[0]
+
+            grouped[tag].append({
+                "operationId": info.get("operationId", ""),
+                "method": method.upper(),
+                "path": path,
+                "summary": info.get("summary", "")
+            })
+    return {
+        "operationGroups": [
+            {
+                "tag": tag,
+                "operations": operation
+            } for tag, operation in grouped.items()
+        ]
+    
+    }
+
+async def get_user_operation(request):
+    openapi_json = request.app.openapi()
+    result = parse_openapi_paths(openapi_json.get("paths", {}))
+    return result
 def resolve_ref(obj, components):
     if isinstance(obj, dict):
         if "$ref" in obj:
