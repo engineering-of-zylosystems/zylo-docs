@@ -8,7 +8,7 @@ class SchemaResponseModel(BaseModel):
 
 class APIRequestModel(BaseModel):
     method: str
-    url: str
+    path: str
     path_params: Optional[Dict[str, Any]] = None
     query_params: Optional[Dict[str, Any]] = None
     body: Optional[Dict[str, Any]] = None
