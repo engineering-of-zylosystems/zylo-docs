@@ -37,3 +37,9 @@ async def get_user_schemas():
         return None
     
     return schemas
+async def get_user_operation_by_id(request, url, method):
+    
+    openapi_json = request.app.openapi()
+    components = openapi_json.get("components", {})
+    result = parse_openapi_paths_by_id(openapi_json.get("paths", {}), components, url, method)
+    return result
