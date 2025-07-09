@@ -59,10 +59,10 @@ async def get_operation(request: Request):
 @router.get("/operation/by-id", include_in_schema=False)
 async def get_operation_by_id(
     request: Request,
-    url: str = Query(..., description="조회할 operationId (예: /auth/login)"),
+    operation: str = Query(..., description="조회할 operationId (예: /auth/login)"),
     method: str = Query(..., description="HTTP 메소드 (예: GET, POST 등)")
 ):
-    result = await get_user_operation_by_id(request, url, method)
+    result = await get_user_operation_by_id(request, operation, method)
     if not result:
         raise HTTPException(
             status_code=404,
@@ -71,7 +71,7 @@ async def get_operation_by_id(
                 "message": "Operation not found",
                 "data": {
                     "code": "OPERATION_NOT_FOUND",
-                    "details": f"No operation found with operationId '{url}'"
+                    "details": f"No operation found with operationId '{operation}'"
                 }
             }
         )
@@ -81,20 +81,20 @@ async def get_operation_by_id(
         "data": result
     }
 
-@router.post("/test-executions", include_in_schema=False)
-async def test_executions(request: Request, request_data: APIRequestModel):
+@router.post("/test-execution", include_in_schema=False)
+async def test_execution(request: Request, request_data: APIRequestModel):
 
-    target_path = request_data.path
+    target_operation = request_data.operation
     if request_data.path_params:
         for key, value in request_data.path_params.items():
             placeholder = f":{key}"
-            target_path = target_path.replace(placeholder, str(value))
+            target_operation = target_operation.replace(placeholder, str(value))
     transport = httpx.ASGITransport(app=request.app)
 
     async with httpx.AsyncClient(transport=transport, base_url="http://") as client:
         response = await client.request(
             method=request_data.method,
-            url=target_path,
+            url=target_operation,
             params=request_data.query_params,
             json=request_data.body
         )
