@@ -37,6 +37,22 @@ async def get_user_schemas():
         return None
     
     return schemas
+def resolve_ref(obj, components):
+    if isinstance(obj, dict):
+        if "$ref" in obj:
+            ref_path = obj['$ref'].strip('#/').split('/')
+            ref = components
+            for key in ref_path[1:]:
+                if not isinstance(ref, dict) or key not in ref:
+                    return obj
+                ref = ref[key]
+            return resolve_ref(ref, components)
+        else:
+            return {k: resolve_ref(v, components) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [resolve_ref(item, components) for item in obj]
+    else:
+        return obj
 def parse_openapi_paths_by_id(paths, components, url, target_method):
     path_item = paths.get(url, {})
     if not path_item:
