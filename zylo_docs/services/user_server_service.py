@@ -71,8 +71,8 @@ def resolve_ref(obj, components):
     else:
         return obj
 
-def parse_openapi_paths_by_id(paths, components, url, target_method):
-    path_item = paths.get(url, {})
+def parse_openapi_paths_by_id(paths, components, operation, target_method):
+    path_item = paths.get(operation, {})
     if not path_item:
         return None
 
