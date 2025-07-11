@@ -1,6 +1,6 @@
 [project]
 name = "zylo-docs"
-version = "0.1.6"
+version = "0.1.8"
 description = ""
 authors = [
     {name = "lee gyu yeol-mac",email = "i1004gy@gmail.com"}
@@ -18,6 +18,9 @@ packages = [{include = "./zylo_docs"}]
 
 [tool.poetry.scripts]
 "run_zylo_docs" = "zylo_docs.cli:main"
+
+[tool.poetry.group.dev.dependencies]
+twine = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
