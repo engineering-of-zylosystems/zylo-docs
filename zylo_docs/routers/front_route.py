@@ -25,7 +25,7 @@ async def get_schemas(request: Request):
         return {
             "success": True,
             "message": "All schemas retrieved successfully",
-            "data":{
+            "data": {
                 "details": result
             }
         }
@@ -56,13 +56,13 @@ async def get_operation(request: Request):
     except Exception as e:
         raise ValueError(f"Unexpected error: {e}")
 
-@router.get("/operation/by-id", include_in_schema=False)
-async def get_operation_by_id(
+@router.get("/operation/by-path", include_in_schema=False)
+async def get_operation_by_path(
     request: Request,
-    operation: str = Query(..., description="조회할 operationId (예: /auth/login)"),
+    path: str = Query(..., description="조회할 operationId (예: /auth/login)"),
     method: str = Query(..., description="HTTP 메소드 (예: GET, POST 등)")
 ):
-    result = await get_user_operation_by_id(request, operation, method)
+    result = await get_user_operation_by_id(request, path, method)
     if not result:
         raise HTTPException(
             status_code=404,
@@ -71,14 +71,14 @@ async def get_operation_by_id(
                 "message": "Operation not found",
                 "data": {
                     "code": "OPERATION_NOT_FOUND",
-                    "details": f"No operation found with operationId '{operation}'"
+                    "details": f"No operation found with operationId '{path}'"
                 }
             }
         )
     return {
         "success": True,
         "message": "Operation retrieved successfully",
-        "data": result
+        "data": result.get(method)
     }
 
 @router.post("/test-execution", include_in_schema=False)
@@ -99,11 +99,13 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             json=request_data.body
         )
         if 200 <= response.status_code < 300:
-            return {
+            return JSONResponse(
+                status_code=200,
+                content={
                 "success": True,
                 "message": "Request executed successfully",
                 "data": response.json() if response.content else None
-            }
+            })
         return JSONResponse(
             status_code=400,
             content={
