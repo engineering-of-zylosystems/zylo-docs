@@ -71,26 +71,26 @@ def resolve_ref(obj, components):
     else:
         return obj
 
-def parse_openapi_paths_by_id(paths, components, operation, target_method):
-    path_item = paths.get(operation, {})
+def parse_openapi_paths_by_id(paths, components, path, target_method):
+    path_item = paths.get(path, {})
     if not path_item:
         return None
 
     resolved_path_item = copy.deepcopy(path_item)
 
     for method, info in resolved_path_item.items():
+        
         if method != target_method:
             continue
         if info.get("requestBody"):
             info["requestBody"] = resolve_ref(info["requestBody"], components)
         if info.get("responses"):
             info["responses"] = resolve_ref(info["responses"], components)
-
     return resolved_path_item
 
-async def get_user_operation_by_id(request, operation, method):
+async def get_user_operation_by_id(request, path, method):
 
     openapi_json = request.app.openapi()
     components = openapi_json.get("components", {})
-    result = parse_openapi_paths_by_id(openapi_json.get("paths", {}), components, operation, method)
+    result = parse_openapi_paths_by_id(openapi_json.get("paths", {}), components, path, method)
     return result
