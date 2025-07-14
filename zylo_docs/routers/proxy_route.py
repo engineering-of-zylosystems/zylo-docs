@@ -13,11 +13,13 @@ from fastapi.responses import JSONResponse
 EXTERNAL_API_BASE = "https://api.zylosystems.com"
 router = APIRouter()
 # 테스트를 위해 임시로 access_token을 하드코딩
-access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUyNDU1NjAxLCJpYXQiOjE3NTI0NTIwMDEsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyNDUyMDAxfV0sInNlc3Npb25faWQiOiJlZTUxNDViYi02ZDY5LTQwOTQtYjQxNC1hYzU2ZTU1NGVmZDkiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.0-Kqdt9NWINp9W86OuEuWzJqjYzncs7RKXqeLhx8g48"
+access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzMDc1ODEwLCJpYXQiOjE3NTI0NzEwMTAsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyNDcxMDEwfV0sInNlc3Npb25faWQiOiI3YzliMjlmOC0wZmEzLTQ1MGMtOWJjYy0yMWQxZWFkNmY0M2IiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ._ISb5WTa8c7GBI8GKRjneCfaQZ47nROcUxoXgPUWwtc"
+
 class DocTypeEnum(str, Enum):
     internal = "internal"
     public = "public"
     partner = "partner"
+
 class ZyloAIRequestBody(BaseModel):
     title: str = Field(..., description="Title of the OpenAPI spec")
     version: str = Field(..., description="Version of the spec")
@@ -38,16 +40,24 @@ async def create_zylo_ai(body: ZyloAIRequestBody):
             "version": body.version,
             "doc_type": body.doc_type.value,
         }
-
-        resp = await client.post(
-            f"{EXTERNAL_API_BASE}/zylo-ai", 
-            files=files_for_upload, 
-            data=text_data,
-            headers={
-                "Authorization": f"Bearer {access_token}"
-            }
-        )
-        resp.raise_for_status()
+        try:
+            resp = await client.post(
+                f"{EXTERNAL_API_BASE}/zylo-ai", 
+                files=files_for_upload, 
+                data=text_data,
+                headers={
+                    "Authorization": f"Bearer {access_token}"
+                }
+            )
+            resp.raise_for_status()
+        
+        except httpx.HTTPStatusError as exc:
+            return Response(
+                content=exc.response.content,
+                status_code=exc.response.status_code,
+                media_type=exc.response.headers.get("content-type")
+            )
+        
         response_json = resp.json()
 
         spec_id = response_json.get("data", {}).get("id")
