@@ -1,10 +1,11 @@
 from collections import defaultdict
 import copy
+from zylo_docs.services.openapi_service import openapi_service
 
 async def get_user_schemas(request):
     schemas = []
 
-    openapi_json = request.app.openapi()
+    openapi_json = openapi_service.get_latest()
     if openapi_json.get("components") is None:
         print("OpenAPI data does not contain 'components' key.")
         return None
@@ -50,7 +51,7 @@ def parse_openapi_paths(paths):
     }
 
 async def get_user_operation(request):
-    openapi_json = request.app.openapi()
+    openapi_json = openapi_service.get_latest()
     result = parse_openapi_paths(openapi_json.get("paths", {}))
     return result
 
@@ -90,7 +91,7 @@ def parse_openapi_paths_by_id(paths, components, path, target_method):
 
 async def get_user_operation_by_id(request, path, method):
 
-    openapi_json = request.app.openapi()
+    openapi_json = openapi_service.get_latest()
     components = openapi_json.get("components", {})
     result = parse_openapi_paths_by_id(openapi_json.get("paths", {}), components, path, method)
     return result
