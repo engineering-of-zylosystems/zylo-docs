@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 from enum import Enum
 EXTERNAL_API_BASE = "https://api.zylosystems.com"
 router = APIRouter()
+# 테스트를 위해 임시로 access_token을 하드코딩
+access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUyNDU1NjAxLCJpYXQiOjE3NTI0NTIwMDEsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyNDUyMDAxfV0sInNlc3Npb25faWQiOiJlZTUxNDViYi02ZDY5LTQwOTQtYjQxNC1hYzU2ZTU1NGVmZDkiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.0-Kqdt9NWINp9W86OuEuWzJqjYzncs7RKXqeLhx8g48"
 class DocTypeEnum(str, Enum):
     internal = "internal"
     public = "public"
@@ -24,22 +26,14 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
     openapi_file_like = BytesIO(openapi_json_content)
     timeout = httpx.Timeout(60.0, connect=5.0)
     async with httpx.AsyncClient(timeout=timeout) as client:
-        # 1. 파일 데이터는 'files' 파라미터용으로 분리합니다.
         files_for_upload = {
             'file': ('openapi.json', openapi_file_like, 'application/json')
         }
-
-        # 2. 텍스트 데이터는 'data' 파라미터용으로 분리합니다.
         text_data = {
             "title": body.title,
             "version": body.version,
             "doc_type": body.doc_type.value,
         }
-
-        # 테스트를 위해 임시로 access_token을 하드코딩
-        access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUyMjI1OTA3LCJpYXQiOjE3NTIyMjIzMDcsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyMjIyMzA3fV0sInNlc3Npb25faWQiOiI5Njk0OTAwZC02NWVjLTRiMmUtYjQwOS04YjJmMmY0MTZlNzciLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.Q-Eeo3VUl9AxfCzhBSCEq5CuIOcbL7An5wVCqmxeVvM"
-        
-        # 3. client.post 호출 시 'files'와 'data'를 구분하여 전달합니다.
         resp = await client.post(
             f"{EXTERNAL_API_BASE}/zylo-ai", 
             files=files_for_upload, 
@@ -48,10 +42,19 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
                 "Authorization": f"Bearer {access_token}"
             }
         )
-        print(f"Response status code: {resp.status_code}")
+        resp.raise_for_status()
+        response_json = resp.json()
+        spec_id = response_json.get("data", {}).get("id")
+        if not spec_id:
+            return Response(content="Response JSON does not contain 'data.id' field.",status_code=400)
+        query_params = {"spec_id": "tuned"}
+        ai_hub_api = f"{EXTERNAL_API_BASE}/specs/{spec_id}"
+        ai_hub_json = await client.get(ai_hub_api, params=query_params,  headers={
+                "Authorization": f"Bearer {access_token}"
+            })
     return Response(
-        content=resp.content,
-        media_type=resp.headers.get("content-type")
+        content=ai_hub_json.content,
+        media_type=ai_hub_json.headers.get("content-type")
     )
 
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
@@ -60,7 +63,7 @@ async def proxy(request: Request, path: str):
             proxy_url = f"{EXTERNAL_API_BASE}/{path}"
             body = await request.body()
             headers = dict(request.headers)
-            headers.pop("host", None)  # host 헤더 제거 제거해야 안점함
+            headers.pop("host", None) 
 
             resp = await client.request(
                 method=request.method,
