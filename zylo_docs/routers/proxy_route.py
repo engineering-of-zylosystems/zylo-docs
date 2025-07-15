@@ -130,33 +130,24 @@ async def get_spec_by_id(request: Request, spec_id: str):
             )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
 async def proxy(request: Request, path: str):
-    if path == 'zylo-ai' and request.method == 'POST':
-        try:
-            body = ZyloAIRequestBody(**await request.json())
-            return await create_zylo_ai(body)
-        except json.JSONDecodeError:
-            return JSONResponse(status_code=400, content={"message": "Invalid JSON body"})
-        except Exception as e:
-            return JSONResponse(status_code=400, content={"message": f"Invalid request body: {e}"})
+        async with httpx.AsyncClient() as client:
+            proxy_url = f"{EXTERNAL_API_BASE}/{path}"
+            body = await request.body()
+            headers = dict(request.headers)
+            headers.pop("host", None) 
 
-    async with httpx.AsyncClient() as client:
-        proxy_url = f"{EXTERNAL_API_BASE}/{path}"
-        body = await request.body()
-        headers = dict(request.headers)
-        headers.pop("host", None)
-
-        resp = await client.request(
-            method=request.method,
-            url=proxy_url,
-            content=body,
-            headers=headers,
-            params=request.query_params,
+            resp = await client.request(
+                method=request.method,
+                url=proxy_url,
+                content=body,
+                headers=headers,
+                params=request.query_params,
+            )
+        headers_to_frontend = dict(resp.headers)
+        # 프론트로 보내는 응답 객체 프론트와 인터페이스를 맞춰야함
+        return Response(
+            headers=headers_to_frontend,
+            content=resp.content,
+            media_type=resp.headers.get("content-type")
         )
-    headers_to_frontend = dict(resp.headers)
-    # 프론트로 보내는 응답 객체 프론트와 인터페이스를 맞춰야함
-    return Response(
-        headers=headers_to_frontend,
-        content=resp.content,
-        media_type=resp.headers.get("content-type")
-    )
 
