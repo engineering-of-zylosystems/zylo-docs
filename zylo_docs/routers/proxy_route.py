@@ -91,6 +91,43 @@ async def get_spec():
         content=resp.content,
         media_type=resp.headers.get("content-type")
     )
+@router.get("/specs/{spec_id}", include_in_schema=False)
+async def get_spec_by_id(request: Request, spec_id: str):
+    if spec_id == "original":
+        service: OpenApiService = request.app.state.openapi_service
+        service.set_current_spec(request.app.openapi())
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": "Original OpenAPI spec retrieved successfully",
+            }
+        )
+    else:
+        async with httpx.AsyncClient() as client:
+            try:
+                resp = await client.get(f"{EXTERNAL_API_BASE}/specs/{spec_id}", headers={"Authorization": f"Bearer {access_token}"})
+                resp.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                return Response(
+                    content=exc.response.content,
+                    status_code=exc.response.status_code,
+                    media_type=exc.response.headers.get("content-type")
+                )
+            spec_content = resp.json().get("data", {}).get("spec_content")
+
+            if not spec_content:
+                return Response(
+                    content="Response JSON does not contain 'data.spec_content' field.",
+                    status_code=400
+                )
+            service: OpenApiService = request.app.state.openapi_service
+            service.set_current_spec(spec_content)
+            return JSONResponse(
+                content={
+                    "success": True,
+                    "message": "Spec retrieved successfully",
+                }
+            )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
 async def proxy(request: Request, path: str):
     if path == 'zylo-ai' and request.method == 'POST':
