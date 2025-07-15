@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
+from zylo_docs.services.hub_server_service import get_spec_content_by_id
 EXTERNAL_API_BASE = "https://api.zylosystems.com"
 router = APIRouter()
 # 테스트를 위해 임시로 access_token을 하드코딩
@@ -60,14 +61,25 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
         spec_id = response_json.get("data", {}).get("id")
         if not spec_id:
             return Response(content="Response JSON does not contain 'data.id' field.",status_code=400)
-        query_params = {"spec_id": "tuned"}
-        ai_hub_api = f"{EXTERNAL_API_BASE}/specs/{spec_id}"
-        ai_hub_json = await client.get(ai_hub_api, params=query_params,  headers={"Authorization": f"Bearer {access_token}"})
-        service.set_current_spec(ai_hub_json.json().get("data").get("spec_content"))
-    return Response(
-        content=ai_hub_json.content,
-        media_type=ai_hub_json.headers.get("content-type")
-    )
+        try:
+            tuned_spec_content = await get_spec_content_by_id(spec_id, client, access_token)
+            service.set_current_spec(tuned_spec_content)
+            return JSONResponse(
+                content={
+                    "success": True,
+                    "message": f"Successfully tuned and applied spec_id: {spec_id}",
+                }
+            )
+        
+        except httpx.HTTPStatusError as exc:
+            return JSONResponse(
+                status_code=exc.response.status_code,
+                content={
+                    "success": False,
+                    "message": "Failed to retrieve tuned spec content",
+                    "details": f"specs/{spec_id} endpoint returned an error",
+                }
+            )
 @router.get("/specs/me",include_in_schema=False)
 async def get_spec():
     async with httpx.AsyncClient() as client:
@@ -101,29 +113,24 @@ async def get_spec_by_id(request: Request, spec_id: str):
     else:
         async with httpx.AsyncClient() as client:
             try:
-                resp = await client.get(f"{EXTERNAL_API_BASE}/specs/{spec_id}", headers={"Authorization": f"Bearer {access_token}"})
-                resp.raise_for_status()
+                spec_content = await get_spec_content_by_id(spec_id, client, access_token)
+                service: OpenApiService = request.app.state.openapi_service
+                service.set_current_spec(spec_content)
+                return JSONResponse(
+                    content={
+                        "success": True,
+                        "message": "Spec retrieved successfully",
+                    }
+                )
             except httpx.HTTPStatusError as exc:
-                return Response(
-                    content=exc.response.content,
+                return JSONResponse(
                     status_code=exc.response.status_code,
-                    media_type=exc.response.headers.get("content-type")
+                    content={
+                        "success": False,
+                        "message": "Failed to retrieve spec content",
+                        "details": f"specs/{spec_id} endpoint returned an error",
+                    }
                 )
-            spec_content = resp.json().get("data", {}).get("spec_content")
-
-            if not spec_content:
-                return Response(
-                    content="Response JSON does not contain 'data.spec_content' field.",
-                    status_code=400
-                )
-            service: OpenApiService = request.app.state.openapi_service
-            service.set_current_spec(spec_content)
-            return JSONResponse(
-                content={
-                    "success": True,
-                    "message": "Spec retrieved successfully",
-                }
-            )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
 async def proxy(request: Request, path: str):
         async with httpx.AsyncClient() as client:
