@@ -66,12 +66,8 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
             return Response(content="Response JSON does not contain 'data.id' field.",status_code=400)
         query_params = {"spec_id": "tuned"}
         ai_hub_api = f"{EXTERNAL_API_BASE}/specs/{spec_id}"
-        ai_hub_json = await client.get(ai_hub_api, params=query_params,  headers={
-                "Authorization": f"Bearer {access_token}"
-            })
-        openapi_service.set_latest(ai_hub_json.json())
-
-
+        ai_hub_json = await client.get(ai_hub_api, params=query_params,  headers={"Authorization": f"Bearer {access_token}"})
+        service.set_current_spec(ai_hub_json.json().get("data").get("spec_content"))
     return Response(
         content=ai_hub_json.content,
         media_type=ai_hub_json.headers.get("content-type")
