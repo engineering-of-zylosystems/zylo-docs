@@ -72,8 +72,25 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
         content=ai_hub_json.content,
         media_type=ai_hub_json.headers.get("content-type")
     )
-
-
+@router.get("/specs/me",include_in_schema=False)
+async def get_spec():
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(f"{EXTERNAL_API_BASE}/specs/me", headers={"Authorization": f"Bearer {access_token}"})
+            resp.raise_for_status()
+            return resp.json()
+        except httpx.HTTPStatusError as exc:
+            return Response(
+                content=exc.response.content,
+                status_code=exc.response.status_code,
+                media_type=exc.response.headers.get("content-type")
+            )
+        
+        
+    return Response(
+        content=resp.content,
+        media_type=resp.headers.get("content-type")
+    )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
 async def proxy(request: Request, path: str):
     if path == 'zylo-ai' and request.method == 'POST':
