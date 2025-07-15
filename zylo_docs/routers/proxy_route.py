@@ -1,4 +1,3 @@
-import pprint
 from fastapi import APIRouter, Request
 from fastapi import Request, Response
 from typing import Optional
@@ -7,13 +6,12 @@ import httpx
 from io import BytesIO
 from pydantic import BaseModel, Field
 from enum import Enum
-from zylo_docs.services.openapi_service import openapi_service
 from fastapi.responses import JSONResponse
-
+from zylo_docs.services.openapi_service import OpenApiService
 EXTERNAL_API_BASE = "https://api.zylosystems.com"
 router = APIRouter()
 # 테스트를 위해 임시로 access_token을 하드코딩
-access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzMDc1ODEwLCJpYXQiOjE3NTI0NzEwMTAsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyNDcxMDEwfV0sInNlc3Npb25faWQiOiI3YzliMjlmOC0wZmEzLTQ1MGMtOWJjYy0yMWQxZWFkNmY0M2IiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ._ISb5WTa8c7GBI8GKRjneCfaQZ47nROcUxoXgPUWwtc"
+access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzMTQ1NTE0LCJpYXQiOjE3NTI1NDA3MTQsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyNTQwNzE0fV0sInNlc3Npb25faWQiOiJjYjUyOTMzYy1lYTg0LTRmOGMtODM2Ny1mMzFkNmNkZTgzYjAiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.Gi9j8h82Y09uR5iV-kBMeAtxsgGgjWVWe_GJd2Txx08"
 
 class DocTypeEnum(str, Enum):
     internal = "internal"
@@ -58,9 +56,7 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
                 status_code=exc.response.status_code,
                 media_type=exc.response.headers.get("content-type")
             )
-        
         response_json = resp.json()
-
         spec_id = response_json.get("data", {}).get("id")
         if not spec_id:
             return Response(content="Response JSON does not contain 'data.id' field.",status_code=400)
