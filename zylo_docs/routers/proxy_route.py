@@ -11,9 +11,12 @@ from zylo_docs.services.openapi_service import openapi_service
 from fastapi.responses import JSONResponse
 
 EXTERNAL_API_BASE = "https://api.zylosystems.com"
+
 router = APIRouter()
+
 # 테스트를 위해 임시로 access_token을 하드코딩
-access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkYTAwMWEyYi1iMjg1LTRiOGUtYTZmMi0xN2M4MjhiZDQ3ZWEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUyNDU1NjAxLCJpYXQiOjE3NTI0NTIwMDEsImVtYWlsIjoic2VvYWtAenlsb3N5c3RlbXMuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InNlb2FrQHp5bG9zeXN0ZW1zLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImRhMDAxYTJiLWIyODUtNGI4ZS1hNmYyLTE3YzgyOGJkNDdlYSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUyNDUyMDAxfV0sInNlc3Npb25faWQiOiJlZTUxNDViYi02ZDY5LTQwOTQtYjQxNC1hYzU2ZTU1NGVmZDkiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.0-Kqdt9NWINp9W86OuEuWzJqjYzncs7RKXqeLhx8g48"
+access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJkZTkwMDAwMS00OGRjLTQ1MzktYjEzNi1jYmQwNDdmMmE0ZDYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzMTUxNDA3LCJpYXQiOjE3NTI1NDY2MDcsImVtYWlsIjoiZHdkY3FkcUBuYXZlci5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZHdkY3FkcUBuYXZlci5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiJkZTkwMDAwMS00OGRjLTQ1MzktYjEzNi1jYmQwNDdmMmE0ZDYifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc1MjU0NjYwN31dLCJzZXNzaW9uX2lkIjoiNzc2NjBlYmUtYjYxMy00MjBkLTkxODgtYmMyMzhhZTFhN2ZlIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.ln_xGdmZunJ7VrPshnBAE3_YtdTYise_TxRUHFo7wn4"
+
 class DocTypeEnum(str, Enum):
     internal = "internal"
     public = "public"
@@ -23,20 +26,22 @@ class ZyloAIRequestBody(BaseModel):
     version: str = Field(..., description="Version of the spec")
     doc_type: DocTypeEnum
     
-async def create_zylo_ai(body: ZyloAIRequestBody):
+async def create_zylo_ai(request: Request):
     openapi_dict = openapi_service.get_latest()
     
     openapi_json_content = json.dumps(openapi_dict, indent=2).encode('utf-8')
     openapi_file_like = BytesIO(openapi_json_content)
     timeout = httpx.Timeout(60.0, connect=5.0)
+
     async with httpx.AsyncClient(timeout=timeout) as client:
         files_for_upload = {
             'file': ('openapi.json', openapi_file_like, 'application/json')
         }
+
         text_data = {
-            "title": body.title,
-            "version": body.version,
-            "doc_type": body.doc_type.value,
+            "title": "title",
+            "version": "version",
+            "doc_type": "public"
         }
 
         resp = await client.post(
@@ -55,15 +60,16 @@ async def create_zylo_ai(body: ZyloAIRequestBody):
             return Response(content="Response JSON does not contain 'data.id' field.",status_code=400)
         query_params = {"spec_id": "tuned"}
         ai_hub_api = f"{EXTERNAL_API_BASE}/specs/{spec_id}"
-        ai_hub_json = await client.get(ai_hub_api, params=query_params,  headers={
+        ai_hub_response = await client.get(ai_hub_api, params=query_params,  headers={
                 "Authorization": f"Bearer {access_token}"
             })
-        openapi_service.set_latest(ai_hub_json.json())
+        ai_hub_response_json = ai_hub_response.json()
+        tuned_api_json = ai_hub_response_json.get("data", {'spec_content':{}}).get('spec_content', {})
+        openapi_service.set_latest(tuned_api_json)
 
 
-    return Response(
-        content=ai_hub_json.content,
-        media_type=ai_hub_json.headers.get("content-type")
+    return JSONResponse(
+        content=tuned_api_json
     )
 
 
@@ -71,8 +77,7 @@ async def create_zylo_ai(body: ZyloAIRequestBody):
 async def proxy(request: Request, path: str):
     if path == 'zylo-ai' and request.method == 'POST':
         try:
-            body = ZyloAIRequestBody(**await request.json())
-            return await create_zylo_ai(body)
+            return await create_zylo_ai(request)
         except json.JSONDecodeError:
             return JSONResponse(status_code=400, content={"message": "Invalid JSON body"})
         except Exception as e:
@@ -98,4 +103,3 @@ async def proxy(request: Request, path: str):
         content=resp.content,
         media_type=resp.headers.get("content-type")
     )
-
