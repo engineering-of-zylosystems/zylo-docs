@@ -24,13 +24,14 @@ class ZyloAIRequestBody(BaseModel):
     title: str = Field(..., description="Title of the OpenAPI spec")
     version: str = Field(..., description="Version of the spec")
     doc_type: DocTypeEnum
-    
-async def create_zylo_ai(body: ZyloAIRequestBody):
-    openapi_dict = openapi_service.get_latest()
-    
+
+@router.post("/zylo-ai", include_in_schema=False)
+async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
+    service: OpenApiService = request.app.state.openapi_service
+    openapi_dict = service.get_current_spec()
     openapi_json_content = json.dumps(openapi_dict, indent=2).encode('utf-8')
     openapi_file_like = BytesIO(openapi_json_content)
-    timeout = httpx.Timeout(60.0, connect=5.0)
+    timeout = httpx.Timeout(timeout=None, connect=None, read=None, write=None)
     async with httpx.AsyncClient(timeout=timeout) as client:
         files_for_upload = {
             'file': ('openapi.json', openapi_file_like, 'application/json')
