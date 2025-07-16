@@ -1,30 +1,6 @@
 from collections import defaultdict
 import copy
-
-async def get_user_schemas(request):
-    schemas = []
-
-    openapi_json = request.app.openapi()
-    if openapi_json.get("components") is None:
-        print("OpenAPI data does not contain 'components' key.")
-        return None
-    components = openapi_json.get("components")
-    if not components:
-        print("'components' key not found in the OpenAPI data.")
-        return None
-
-    schemas_section = components.get("schemas")
-    if not schemas_section:
-        print("'schemas' key not found in the 'components' section of the OpenAPI data.")
-        return None
-
-    for schema_name, schema in schemas_section.items():
-        schemas.append({schema_name: schema})
-    if not schemas:
-        print("No schemas found in the OpenAPI data.")
-        return None
-    
-    return schemas
+from zylo_docs.services.openapi_service import OpenApiService
 
 def parse_openapi_paths(paths):
     grouped = defaultdict(list)
@@ -50,7 +26,8 @@ def parse_openapi_paths(paths):
     }
 
 async def get_user_operation(request):
-    openapi_json = request.app.openapi()
+    service: OpenApiService = request.app.state.openapi_service
+    openapi_json = service.get_current_spec()
     result = parse_openapi_paths(openapi_json.get("paths", {}))
     return result
 
@@ -90,7 +67,8 @@ def parse_openapi_paths_by_id(paths, components, path, target_method):
 
 async def get_user_operation_by_id(request, path, method):
 
-    openapi_json = request.app.openapi()
+    service: OpenApiService = request.app.state.openapi_service
+    openapi_json = service.get_current_spec()
     components = openapi_json.get("components", {})
     result = parse_openapi_paths_by_id(openapi_json.get("paths", {}), components, path, method)
     return result

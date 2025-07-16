@@ -14,7 +14,7 @@ dist/
 .venv
 env/
 venv/
-
+.editorconfig
 # IDE
 .vscode/
 .idea/

@@ -1,36 +1,12 @@
 from fastapi import APIRouter,Query, Request,HTTPException
-from zylo_docs.services.user_server_service import get_user_schemas, get_user_operation,get_user_operation_by_id
+from zylo_docs.services.openapi_service import OpenApiService
+from zylo_docs.services.user_server_service import get_user_operation,get_user_operation_by_id
 from zylo_docs.schemas.schema_data import SchemaResponseModel
 from zylo_docs.schemas.schema_data import APIRequestModel
 from fastapi.responses import JSONResponse
 import httpx
 
 router = APIRouter()
-@router.get("/schemas",response_model=SchemaResponseModel, include_in_schema=False)
-async def get_schemas(request: Request):
-    try:
-        result = await get_user_schemas(request)
-        if result is None or not result: 
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "success": False,
-                    "message": "Schemas are not found in localmachine ",
-                    "error": {
-                    "code": "SCHEMAS_NOT_FOUND",
-                    "details": "No schemas found with all_schemas.json"
-                    }
-                }
-            )
-        return {
-            "success": True,
-            "message": "All schemas retrieved successfully",
-            "data": {
-                "details": result
-            }
-        }
-    except:
-        raise ValueError("Invalid operationId 'invalidId'")
 @router.get("/operation", response_model=SchemaResponseModel, include_in_schema=False)
 async def get_operation(request: Request):
     try:

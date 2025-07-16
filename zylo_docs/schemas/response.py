@@ -16,3 +16,4 @@ class APIErrorResponse(BaseModel):
     success: bool = False
     message: str
     data: APIErrorDetail
+
