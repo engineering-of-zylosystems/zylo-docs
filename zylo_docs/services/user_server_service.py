@@ -70,6 +70,5 @@ async def get_user_operation_by_id(request, path, method):
     service: OpenApiService = request.app.state.openapi_service
     openapi_json = service.get_current_spec()
     components = openapi_json.get("components", {})
-    print(components)
     result = parse_openapi_paths_by_method(openapi_json.get("paths", {}), components, path, method)
     return result
