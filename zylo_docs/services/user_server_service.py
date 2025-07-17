@@ -48,7 +48,7 @@ def resolve_ref(obj, components):
     else:
         return obj
 
-def parse_openapi_paths_by_id(paths, components, path, target_method):
+def parse_openapi_paths_by_method(paths, components, path, target_method):
     path_item = paths.get(path, {})
     if not path_item:
         return None
@@ -70,5 +70,5 @@ async def get_user_operation_by_id(request, path, method):
     service: OpenApiService = request.app.state.openapi_service
     openapi_json = service.get_current_spec()
     components = openapi_json.get("components", {})
-    result = parse_openapi_paths_by_id(openapi_json.get("paths", {}), components, path, method)
+    result = parse_openapi_paths_by_method(openapi_json.get("paths", {}), components, path, method)
     return result

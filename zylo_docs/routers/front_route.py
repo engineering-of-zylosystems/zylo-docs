@@ -35,8 +35,8 @@ async def get_operation(request: Request):
 @router.get("/operation/by-path", include_in_schema=False)
 async def get_operation_by_path(
     request: Request,
-    path: str = Query(..., description="조회할 operationId (예: /auth/login)"),
-    method: str = Query(..., description="HTTP 메소드 (예: GET, POST 등)")
+    path: str = Query(..., description="조회할 operationId"),
+    method: str = Query(..., description="HTTP 메소드")
 ):
     result = await get_user_operation_by_id(request, path, method)
     if not result:
@@ -67,7 +67,7 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             target_operation = target_operation.replace(placeholder, str(value))
     transport = httpx.ASGITransport(app=request.app)
 
-    async with httpx.AsyncClient(transport=transport, base_url="http://") as client:
+    async with httpx.AsyncClient(transport=transport) as client:
         response = await client.request(
             method=request_data.method,
             url=target_operation,
