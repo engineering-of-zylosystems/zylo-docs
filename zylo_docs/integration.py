@@ -22,7 +22,7 @@ def add_zylo_docs(app: FastAPI):
     app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
     app.add_middleware(ExceptionHandlingMiddleware)
 
-    @app.get("/zylo-docs", include_in_schema=False)
+    @app.get("/zylo-docs/{full_path:path}", include_in_schema=False)
     async def serve_react_app():
         print(f"Serving React app from {os.path.join(os.path.dirname(__file__), 'static', 'index.html')}")
         return FileResponse(os.path.join(os.path.dirname(__file__), "static", "index.html"))
