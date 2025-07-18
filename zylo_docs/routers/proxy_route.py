@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi import Request, Response
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
 import json
 import httpx
@@ -11,9 +12,7 @@ from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
 EXTERNAL_API_BASE = "https://api.zylosystems.com"
 router = APIRouter()
-# 테스트를 위해 임시로 access_token을 하드코딩
-access_token = "eyJhbGciOiJIUzI1NiIsImtpZCI6IldsSEd6eVR0emtaaC9GOVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL21hdXhmc3NjZnpvcmlqdGdubWplLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI1MzQ1YjBiYy1hMTE1LTQ0NTEtYjk4Yy1kZjI0YjMzZjNjMjQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzMzE3MDA3LCJpYXQiOjE3NTI3MTIyMDcsImVtYWlsIjoiZGVtb0B6eWxvc3lzdGVtcy5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZGVtb0B6eWxvc3lzdGVtcy5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiI1MzQ1YjBiYy1hMTE1LTQ0NTEtYjk4Yy1kZjI0YjMzZjNjMjQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc1MjcxMjIwN31dLCJzZXNzaW9uX2lkIjoiY2RhOTZkNGItMmU5YS00NDg3LTkwNDYtZTlhNzk4ZjU2ZDIxIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.Ls-yWinr-OfvcDS5StdrKrVaxNWFlZxaL-l1Aq3C4UE"
-
+security = HTTPBearer()
 class DocTypeEnum(str, Enum):
     internal = "internal"
     public = "public"
@@ -25,7 +24,8 @@ class ZyloAIRequestBody(BaseModel):
     doc_type: DocTypeEnum
 
 @router.post("/zylo-ai", include_in_schema=False)
-async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
+async def create_zylo_ai(request: Request, body: ZyloAIRequestBody,credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
     service: OpenApiService = request.app.state.openapi_service
     openapi_dict = service.get_current_spec()
     openapi_json_content = json.dumps(openapi_dict, indent=2).encode('utf-8')
@@ -81,7 +81,8 @@ async def create_zylo_ai(request: Request, body: ZyloAIRequestBody):
                 }
             )
 @router.get("/specs/me",include_in_schema=False)
-async def get_spec():
+async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
     async with httpx.AsyncClient() as client:
         try:
             resp = await client.get(f"{EXTERNAL_API_BASE}/specs/me", headers={"Authorization": f"Bearer {access_token}"})
@@ -100,7 +101,8 @@ async def get_spec():
         media_type=resp.headers.get("content-type")
     )
 @router.get("/specs/{spec_id}", include_in_schema=False)
-async def get_spec_by_id(request: Request, spec_id: str):
+async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
     if spec_id == "original":
         service: OpenApiService = request.app.state.openapi_service
         service.set_current_spec(request.app.openapi())
