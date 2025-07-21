@@ -47,25 +47,26 @@ def resolve_ref(obj, components):
         return [resolve_ref(item, components) for item in obj]
     else:
         return obj
-def resolve_testcase_inputs(info, components):
-    inputs = []
+def resolve_testcase_inputs(info):
     testcase = {}
     parameters = info.get("parameters", [])
     for param in parameters:
         if param.get("in")=="query":
-            for key, value in param["examples"].items():
-                if key not in testcase:
-                    testcase[key] = {}
-                if testcase[key].get("query_params") is None:
-                    testcase[key]["query_params"] = {}
-                testcase[key]["query_params"][param["name"]] = value.get("value")
+            if param.get("examples"):
+                for key, value in param["examples"].items():
+                    if key not in testcase:
+                        testcase[key] = {}
+                    if testcase[key].get("query_params") is None:
+                        testcase[key]["query_params"] = {}
+                    testcase[key]["query_params"][param["name"]] = value.get("value")
         if param.get("in")=="path":
-            for key, value in param["examples"].items():
-                if key not in testcase:
-                    testcase[key] = {}
-                if testcase[key].get("path_params") is None:
-                    testcase[key]["path_params"] = {}
-                testcase[key]["path_params"][param["name"]] = value.get("value")
+            if param.get("examples"):
+                for key, value in param["examples"].items():
+                    if key not in testcase:
+                        testcase[key] = {}
+                    if testcase[key].get("path_params") is None:
+                        testcase[key]["path_params"] = {}
+                    testcase[key]["path_params"][param["name"]] = value.get("value")
     requestBody_examples = info.get("requestBody", {}).get("content",{}).get("application/json", {}).get("examples", {})
     for key, value in requestBody_examples.items():
         if key not in testcase:
@@ -88,7 +89,7 @@ def parse_openapi_paths_by_method(paths, components, path, target_method):
             info["requestBody"] = resolve_ref(info["requestBody"], components)
         if info.get("responses"):
             info["responses"] = resolve_ref(info["responses"], components)
-        testcase = resolve_testcase_inputs(info, components)
+        testcase = resolve_testcase_inputs(info)
         info["testcase_inputs"] = testcase
         
     return resolved_path_item
