@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Query, Request,HTTPException
 from zylo_docs.services.openapi_service import OpenApiService
-from zylo_docs.services.user_server_service import get_user_operation,get_user_operation_by_id
+from zylo_docs.services.user_server_service import get_user_operation,get_user_operation_by_path
 from zylo_docs.schemas.schema_data import SchemaResponseModel
 from zylo_docs.schemas.schema_data import APIRequestModel
 from fastapi.responses import JSONResponse
@@ -38,8 +38,8 @@ async def get_operation_by_path(
     path: str = Query(..., description="조회할 operationId"),
     method: str = Query(..., description="HTTP 메소드")
 ):
-    result = await get_user_operation_by_id(request, path, method)
-    if not result:
+    result = await get_user_operation_by_path(request, path, method)
+    if not result or not result.get(method):
         raise HTTPException(
             status_code=404,
             detail={
