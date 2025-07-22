@@ -7,6 +7,9 @@ on:
     branches:
       - staging # staging 브랜치에 푸시가 발생할 때 이 워크플로우를 실행합니다.
 
+permissions:
+  contents: write
+
 # 워크플로우에서 실행될 작업(jobs) 정의
 jobs:
   sync_frontend:
@@ -18,6 +21,10 @@ jobs:
       # 1. 저장소 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v4 # 저장소의 코드를 워크플로우 실행 환경으로 가져옵니다.
+        with:
+          # Git 푸시를 위해 토큰 권한을 부여합니다.
+          # 이 토큰은 워크플로우가 저장소에 변경 사항을 푸시할 수 있도록 합니다.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # 2. AWS 자격 증명 설정
       - name: Configure AWS Credentials
@@ -37,7 +44,7 @@ jobs:
           set -e # 스크립트 실행 중 오류 발생 시 즉시 종료합니다.
 
           S3_PATH="s3://zylo-docs-lib-fe/docs/" # S3 버킷 경로를 정의합니다.
-          DEST_DIR="app/static" # 파일을 다운로드할 로컬 디렉토리를 정의합니다.
+          DEST_DIR="zylo-docs/static" # 파일을 다운로드할 로컬 디렉토리를 정의합니다.
 
           # S3 버킷에 접근 가능한지 확인합니다.
           echo "🔍 S3 버킷 접근 가능한지 확인 중..."
@@ -57,3 +64,23 @@ jobs:
           aws s3 cp "$S3_PATH" "$DEST_DIR/" --recursive # S3 경로의 모든 파일을 대상 디렉토리로 재귀적으로 복사합니다.
 
           echo "✅ Done! Files downloaded to $DEST_DIR"
+
+      # 4. 변경된 프론트엔드 파일을 Git에 커밋하고 푸시 (새로운 단계)
+      - name: Commit and Push Frontend Files
+        run: |
+          # Git 사용자 정보를 설정합니다.
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+          # 변경된 파일이 있는지 확인하고 스테이징합니다.
+          # app/static 디렉토리의 모든 변경 사항을 추가합니다.
+          git add app/static
+
+          # 변경된 파일이 있다면 커밋합니다.
+          # "[skip ci]" 또는 "[skip actions]"를 커밋 메시지에 포함하여
+          # 이 푸시가 다시 워크플로우를 트리거하지 않도록 합니다.
+          git commit -m "Sync frontend build files from S3 [skip ci]" || echo "No changes to commit"
+
+          # 변경 사항을 staging 브랜치로 푸시합니다.
+          # 현재 브랜치(staging)로 푸시합니다.
+          git push origin HEAD
