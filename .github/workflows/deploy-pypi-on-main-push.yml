@@ -27,10 +27,10 @@ jobs:
         run: |
           pip install poetry twine
 
-      - name: Update package name to zylib-test for staging
+      - name: Update package name to zylo-docs for staging
         run: |
-          echo "🛠 Changing package name in pyproject.toml to 'zylib-test'"
-          sed -i 's/^name = "zylo-docs"/name = "zylib-test"/' pyproject.toml
+          echo "🛠 Changing package name in pyproject.toml to 'zylo-docs'"
+          sed -i 's/^name = "zylib-test"/name = "zylo-docs"/' pyproject.toml
 
       - name: Deploy to PyPI
         env:
@@ -41,22 +41,6 @@ jobs:
 
           echo "--- 기존 dist 삭제 ---"
           rm -rf ./dist
-
-          echo "--- Git 설정 ---"
-          git config user.name github-actions[bot]
-          git config user.email github-actions[bot]@users.noreply.github.com
-
-          echo "--- 버전 올리기 ---"
-          poetry version patch
-          VERSION=$(poetry version -s)
-          echo "➡️ 새 버전: $VERSION"
-
-          echo "--- 변경사항 커밋 ---"
-          git add pyproject.toml
-          git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
-
-          echo "--- 커밋 푸시 ---"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
 
           echo "--- 빌드 ---"
           poetry build
