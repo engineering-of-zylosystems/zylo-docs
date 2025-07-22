@@ -27,34 +27,36 @@ jobs:
         run: |
           pip install poetry twine
 
-      - name: Bump version, build and upload to PyPI
+      - name: Deploy to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           set -e
 
-          echo "--- 기존 dist/ 삭제 ---"
-          rm -rf dist
+          echo "--- 기존 dist 삭제 ---"
+          rm -rf ./dist
 
           echo "--- Git 설정 ---"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
 
-          echo "--- 버전 패치 (poetry version patch) ---"
+          echo "--- 버전 올리기 ---"
           poetry version patch
+          VERSION=$(poetry version -s)
+          echo "➡️ 새 버전: $VERSION"
 
           echo "--- 변경사항 커밋 ---"
           git add pyproject.toml
-          git commit -m "🔖 Bump version for PyPI release [skip ci]" || echo "No version change to commit"
+          git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
 
           echo "--- 커밋 푸시 ---"
-          git push origin HEAD
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
 
           echo "--- 빌드 ---"
           poetry build
 
           echo "--- PyPI 업로드 ---"
-          twine upload --repository pypi dist/*
+          twine upload dist/*
 
-          echo "--- ✅ 배포 완료 ---"
+          echo "✅ 배포 완료!"
