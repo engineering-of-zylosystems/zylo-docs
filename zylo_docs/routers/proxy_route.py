@@ -100,7 +100,7 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
         content=resp.content,
         media_type=resp.headers.get("content-type")
     )
-@router.get("/specs/{spec_id}", include_in_schema=False)
+@router.post("pivot-current-spec/{spec_id}", include_in_schema=False)
 async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
     if spec_id == "original":
