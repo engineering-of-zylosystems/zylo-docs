@@ -7,6 +7,9 @@ on:
     branches:
       - staging # staging 브랜치에 푸시가 발생할 때 이 워크플로우를 실행합니다.
 
+permissions:
+  contents: write
+
 # 워크플로우에서 실행될 작업(jobs) 정의
 jobs:
   sync_frontend:
