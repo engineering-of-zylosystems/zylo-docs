@@ -44,7 +44,7 @@ jobs:
           set -e # 스크립트 실행 중 오류 발생 시 즉시 종료합니다.
 
           S3_PATH="s3://zylo-docs-lib-fe/docs/" # S3 버킷 경로를 정의합니다.
-          DEST_DIR="app/static" # 파일을 다운로드할 로컬 디렉토리를 정의합니다.
+          DEST_DIR="zylo-docs/static" # 파일을 다운로드할 로컬 디렉토리를 정의합니다.
 
           # S3 버킷에 접근 가능한지 확인합니다.
           echo "🔍 S3 버킷 접근 가능한지 확인 중..."
