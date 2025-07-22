@@ -93,7 +93,7 @@ jobs:
           echo "🛠 Changing package name in pyproject.toml to 'zylib-test'"
           sed -i 's/^name = "zylo-docs"/name = "zylib-test"/' pyproject.toml
 
-      - name: Build and Publish to Test PyPI
+      - name: Build and Publish zylib-test to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
@@ -117,7 +117,7 @@ jobs:
           git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
 
           echo "--- 커밋 푸시 ---"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:staging
 
           echo "--- 빌드 ---"
           poetry build
