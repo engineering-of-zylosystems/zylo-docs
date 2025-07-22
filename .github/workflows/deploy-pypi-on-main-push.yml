@@ -1,0 +1,56 @@
+# 워크플로우의 이름
+name: Deploy PyPI on Main Push
+
+# 워크플로우가 실행될 조건 정의
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시가 발생할 때 이 워크플로우를 실행합니다.
+
+# 워크플로우에서 실행될 작업(jobs) 정의
+jobs:
+  deploy:
+    # 이 작업이 실행될 환경을 지정합니다.
+    runs-on: ubuntu-latest
+
+    # 작업의 단계(steps) 정의
+    steps:
+      # 1. 저장소 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4 # 저장소의 코드를 워크플로우 실행 환경으로 가져옵니다.
+
+      # 2. Python 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v5 # Python 환경을 설정하는 GitHub Action을 사용합니다.
+        with:
+          python-version: "3.13" # 사용할 Python 버전을 지정합니다. (최신 3.x 버전)
+
+      # 3. Poetry 및 Twine 설치
+      - name: Install Poetry and Twine
+        run: |
+          pip install poetry twine # pip를 사용하여 Poetry와 Twine을 설치합니다.
+
+      # 4. PyPI에 라이브러리 배포
+      - name: Deploy to PyPI
+        env:
+          # Twine 업로드에 필요한 환경 변수를 설정합니다.
+          TWINE_USERNAME: __token__ # PyPI API 토큰을 사용할 때 사용자 이름은 '__token__'으로 고정됩니다.
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }} # GitHub Secrets에 저장된 PyPI API 토큰을 사용합니다.
+        run: |
+          set -e # 스크립트 실행 중 오류 발생 시 즉시 종료합니다.
+
+          echo "--- 기존 배포 파일 삭제 (dist/) ---"
+          rm -rf ./dist # 빌드된 패키지 파일을 저장하는 dist/ 디렉토리를 삭제합니다.
+
+          echo "--- 버전 올리기 (poetry version patch) ---"
+          # poetry를 사용하여 pyproject.toml 파일의 패치 버전을 자동으로 올립니다.
+          # 예: 1.0.0 -> 1.0.1
+          poetry version patch
+
+          echo "--- 새로운 버전 빌드 (poetry build) ---"
+          poetry build # poetry를 사용하여 패키지를 빌드합니다. (dist/ 디렉토리에 .whl 및 .tar.gz 파일 생성)
+
+          echo "--- PyPI에 업로드 (twine upload) ---"
+          twine upload --repository pypi dist/* # Twine을 사용하여 빌드된 모든 패키지 파일을 PyPI에 업로드합니다.
+
+          echo "--- 배포 완료! ---"
