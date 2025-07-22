@@ -1,0 +1,59 @@
+# 워크플로우의 이름
+name: Sync Frontend on Staging Push
+
+# 워크플로우가 실행될 조건 정의
+on:
+  push:
+    branches:
+      - staging # staging 브랜치에 푸시가 발생할 때 이 워크플로우를 실행합니다.
+
+# 워크플로우에서 실행될 작업(jobs) 정의
+jobs:
+  sync_frontend:
+    # 이 작업이 실행될 환경을 지정합니다.
+    runs-on: ubuntu-latest
+
+    # 작업의 단계(steps) 정의
+    steps:
+      # 1. 저장소 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4 # 저장소의 코드를 워크플로우 실행 환경으로 가져옵니다.
+
+      # 2. AWS 자격 증명 설정
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4 # AWS 자격 증명을 설정하는 GitHub Action을 사용합니다.
+        with:
+          # GitHub Secrets에 저장된 AWS Access Key ID를 사용합니다.
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # GitHub Secrets에 저장된 AWS Secret Access Key를 사용합니다.
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # AWS 리전을 지정합니다. (예: ap-northeast-2는 서울 리전)
+          aws-region: ap-northeast-2
+
+      # 3. S3에서 프론트엔드 빌드 파일 다운로드
+      - name: Download Frontend Build Files from S3
+        run: |
+          #!/bin/bash
+          set -e # 스크립트 실행 중 오류 발생 시 즉시 종료합니다.
+
+          S3_PATH="s3://zylo-docs-lib-fe/docs/" # S3 버킷 경로를 정의합니다.
+          DEST_DIR="app/static" # 파일을 다운로드할 로컬 디렉토리를 정의합니다.
+
+          # S3 버킷에 접근 가능한지 확인합니다.
+          echo "🔍 S3 버킷 접근 가능한지 확인 중..."
+          if ! aws s3 ls "$S3_PATH" > /dev/null; then
+            echo "❌ S3 경로 접근 실패: $S3_PATH"
+            echo "🔒 권한 또는 경로가 잘못되었을 수 있습니다."
+            exit 1 # 접근 실패 시 스크립트를 종료합니다.
+          fi
+
+          # 대상 디렉토리를 정리하고 생성합니다.
+          echo "🧹 Cleaning $DEST_DIR directory..."
+          mkdir -p "$DEST_DIR" # 디렉토리가 없으면 생성합니다.
+          rm -rf "${DEST_DIR:?}"/* # 기존 파일을 모두 삭제합니다. (DEST_DIR이 비어있지 않도록 주의)
+
+          # S3에서 파일을 다운로드합니다.
+          echo "📥 Downloading files from $S3_PATH"
+          aws s3 cp "$S3_PATH" "$DEST_DIR/" --recursive # S3 경로의 모든 파일을 대상 디렉토리로 재귀적으로 복사합니다.
+
+          echo "✅ Done! Files downloaded to $DEST_DIR"
