@@ -1,6 +1,6 @@
 [project]
 name = "zylo-docs"
-version = "0.0.19"
+version = "0.0.25"
 description = ""
 authors = [
     {name = "lee gyu yeol-mac",email = "i1004gy@gmail.com"}
