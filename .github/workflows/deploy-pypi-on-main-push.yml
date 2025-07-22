@@ -27,6 +27,11 @@ jobs:
         run: |
           pip install poetry twine
 
+      - name: Update package name to zylib-test for staging
+        run: |
+          echo "🛠 Changing package name in pyproject.toml to 'zylib-test'"
+          sed -i 's/^name = "zylo-docs"/name = "zylib-test"/' pyproject.toml
+
       - name: Deploy to PyPI
         env:
           TWINE_USERNAME: __token__

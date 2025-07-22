@@ -84,3 +84,45 @@ jobs:
           # 변경 사항을 staging 브랜치로 푸시합니다.
           # 현재 브랜치(staging)로 푸시합니다.
           git push origin HEAD
+
+      - name: Install Poetry and Twine
+        run: pip install poetry twine
+
+      - name: Update package name to zylib-test for staging
+        run: |
+          echo "🛠 Changing package name in pyproject.toml to 'zylib-test'"
+          sed -i 's/^name = "zylo-docs"/name = "zylib-test"/' pyproject.toml
+
+      - name: Build and Publish zylib-test to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          set -e
+
+          echo "--- 기존 dist 삭제 ---"
+          rm -rf ./dist
+
+          echo "--- Git 설정 ---"
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+          echo "--- 버전 올리기 ---"
+          poetry version patch
+          VERSION=$(poetry version -s)
+          echo "➡️ 새 버전: $VERSION"
+
+          echo "--- 변경사항 커밋 ---"
+          git add pyproject.toml
+          git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
+
+          echo "--- 커밋 푸시 ---"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:staging
+
+          echo "--- 빌드 ---"
+          poetry build
+
+          echo "--- PyPI 업로드 ---"
+          twine upload dist/*
+
+          echo "✅ 배포 완료!"
