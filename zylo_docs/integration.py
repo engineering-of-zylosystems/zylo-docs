@@ -7,7 +7,7 @@ from .routers import front_route, proxy_route
 from .middlewares.exception_handler import ExceptionHandlingMiddleware
 from zylo_docs.services.openapi_service import OpenApiService 
 
-EXTERNAL_API_BASE = "https://api.zylosystems.com"
+EXTERNAL_API_BASE = "http://127.0.0.1:8000"
 PROXY_PREFIX = "/zylo-docs/api"
 def set_initial_openapi_spec(app: FastAPI):
     openapi_json = app.openapi()
