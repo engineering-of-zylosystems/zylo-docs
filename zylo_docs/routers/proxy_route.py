@@ -10,7 +10,8 @@ from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
-EXTERNAL_API_BASE = "https://api.zylosystems.com"
+# EXTERNAL_API_BASE = "https://api.zylosystems.com"
+EXTERNAL_API_BASE = "http://127.0.0.1:8000"
 router = APIRouter()
 security = HTTPBearer()
 class DocTypeEnum(str, Enum):
@@ -100,6 +101,8 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
         content=resp.content,
         media_type=resp.headers.get("content-type")
     )
+
+
 @router.get("/specs/{spec_id}", include_in_schema=False)
 async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
@@ -133,6 +136,34 @@ async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthor
                         "details": f"specs/{spec_id} endpoint returned an error",
                     }
                 )
+@router.post("/projects/{dummy_id}/specs/{spec_id}/invite", include_in_schema=False)
+async def get_project_members(request: Request, dummy_id: str, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
+    project_id = ""
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(f"{EXTERNAL_API_BASE}/projects", headers={"Authorization": f"Bearer {access_token}"})
+            resp.raise_for_status()
+            project_id = resp.json().get("data", {})[0].get("project_id")
+        except httpx.HTTPStatusError as exc:
+            return Response(
+                content=exc.response.content,
+                status_code=exc.response.status_code,
+                media_type=exc.response.headers.get("content-type")
+            )
+    print(f"Project ID: {project_id}")
+
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite", headers={"Authorization": f"Bearer {access_token}"})
+            resp.raise_for_status()
+            return resp.json()
+        except httpx.HTTPStatusError as exc:
+            return Response(
+                content=exc.response.content,
+                status_code=exc.response.status_code,
+                media_type=exc.response.headers.get("content-type")
+            )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
 async def proxy(request: Request, path: str):
         async with httpx.AsyncClient() as client:
@@ -148,6 +179,8 @@ async def proxy(request: Request, path: str):
                 headers=headers,
                 params=request.query_params,
             )
+            
+            print(resp.status_code, resp.headers, resp.content)
         headers_to_frontend = dict(resp.headers)
         # 프론트로 보내는 응답 객체 프론트와 인터페이스를 맞춰야함
         return Response(
