@@ -23,7 +23,8 @@ class ZyloAIRequestBody(BaseModel):
     title: str = Field(..., description="Title of the OpenAPI spec")
     version: str = Field(..., description="Version of the spec")
     doc_type: DocTypeEnum
-
+class InviteRequestBody(BaseModel):
+    emails: list[str] = Field(..., description="List of emails to invite")
 @router.post("/zylo-ai", include_in_schema=False)
 async def create_zylo_ai(request: Request, body: ZyloAIRequestBody,credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
