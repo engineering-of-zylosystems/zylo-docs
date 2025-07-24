@@ -3,7 +3,7 @@
 set -e
 
 S3_PATH="s3://zylo-docs-lib-fe/docs/"
-DEST_DIR="app/static"
+DEST_DIR="zylo_docs/static"
 
 # 1. AWS CLI 확인
 if ! command -v aws &> /dev/null; then
@@ -21,8 +21,9 @@ fi
 
 # 3. 디렉토리 정리
 echo "🧹 Cleaning $DEST_DIR directory..."
-mkdir -p "$DEST_DIR"
 rm -rf "${DEST_DIR:?}"/*
+mkdir -p "$DEST_DIR"
+
 
 # 4. 파일 복사
 echo "📥 Downloading files from $S3_PATH"
