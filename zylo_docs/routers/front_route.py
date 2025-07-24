@@ -68,26 +68,37 @@ async def test_execution(request: Request, request_data: APIRequestModel):
     transport = httpx.ASGITransport(app=request.app)
 
     async with httpx.AsyncClient(transport=transport) as client:
-        response = await client.request(
-            method=request_data.method,
-            url=target_operation,
-            params=request_data.query_params,
-            json=request_data.body
-        )
-        if 200 <= response.status_code < 300:
+        try:
+            response = await client.request(
+                method=request_data.method,
+                url=target_operation,
+                params=request_data.query_params,
+                json=request_data.body
+            )
+            if 200 <= response.status_code < 300:
+                return JSONResponse(
+                    status_code=200,
+                    content={
+                    "success": True,
+                    "message": "Request executed successfully",
+                    "data": response.json() if response.content else None
+                })
             return JSONResponse(
-                status_code=200,
+                status_code=400,
                 content={
-                "success": True,
-                "message": "Request executed successfully",
-                "data": response.json() if response.content else None
-            })
-        return JSONResponse(
-            status_code=400,
-            content={
-                "success": False,
-                "message": "Test failed",
-                "code": "INTERNAL_LOGIC_TEST_FAILED",
-                "data": response.json() if response.content else None
-            }
-        )
+                    "success": False,
+                    "message": "Test failed",
+                    "code": "INTERNAL_LOGIC_TEST_FAILED",
+                    "data": response.json() if response.content else None
+                }
+            )
+        except:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "success": False,
+                    "message": "Test failed due to unexpected error",
+                    "code": "UNEXPECTED_ERROR",
+                    "data": None
+                }
+            )
