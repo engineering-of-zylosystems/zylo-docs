@@ -16,10 +16,10 @@ def set_initial_openapi_spec(app: FastAPI):
 def add_zylo_docs(app: FastAPI):
     if not hasattr(app.state, 'openapi_service'):
         app.state.openapi_service = OpenApiService()
-    
+        
+    app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
     app.include_router(front_route.router, prefix="/zylo-docs", tags=["schemas"])
     app.include_router(proxy_route.router, prefix="/zylo-docs/api", tags=["proxy"])
-    app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
     app.add_middleware(ExceptionHandlingMiddleware)
 
     @app.get("/zylo-docs/{full_path:path}", include_in_schema=False)
