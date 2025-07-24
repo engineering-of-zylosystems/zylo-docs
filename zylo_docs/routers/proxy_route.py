@@ -16,8 +16,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# EXTERNAL_API_BASE = "https://api.zylosystems.com"
-EXTERNAL_API_BASE = "http://127.0.0.1:8000"
+EXTERNAL_API_BASE = "https://api.zylosystems.com"
+# EXTERNAL_API_BASE = "http://127.0.0.1:8000"
 router = APIRouter()
 security = HTTPBearer()
 class DocTypeEnum(str, Enum):
