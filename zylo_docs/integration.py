@@ -6,6 +6,9 @@ from zylo_docs.schemas.response import APIResponse
 from .routers import front_route, proxy_route 
 from .middlewares.exception_handler import ExceptionHandlingMiddleware
 from zylo_docs.services.openapi_service import OpenApiService 
+from zylo_docs.logging import NoZyloDocsLogFilter
+# 로깅 삭제하는 코드 개발 모드에서는 주석 처리
+NoZyloDocsLogFilter().setup_logging()
 
 
 def set_initial_openapi_spec(app: FastAPI):
@@ -17,7 +20,8 @@ def add_zylo_docs(app: FastAPI):
         app.state.openapi_service = OpenApiService()
         
     app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
-    app.include_router(front_route.router, prefix="/zylo-docs", tags=["schemas"])
+
+    app.include_router(front_route.router, prefix="/zylo-docs", tags=["front"])
     app.include_router(proxy_route.router, prefix="/zylo-docs/api", tags=["proxy"])
     app.add_middleware(ExceptionHandlingMiddleware)
 
