@@ -169,10 +169,12 @@ async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthor
 #                     }
 #                 )
 @router.post("/projects/{dummy_id}/specs/{spec_id}/invite", include_in_schema=False)
-async def get_project_members(request: Request, dummy_id: str, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_project_members(request: Request, dummy_id: str, spec_id: str, body: InviteRequestBody , credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
     project_id = ""
-    async with httpx.AsyncClient() as client:
+    emails = body.emails
+    timeout = httpx.Timeout(timeout=None, connect=None, read=None, write=None)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         try:
             resp = await client.get(f"{EXTERNAL_API_BASE}/projects", headers={"Authorization": f"Bearer {access_token}"})
             resp.raise_for_status()
@@ -183,11 +185,13 @@ async def get_project_members(request: Request, dummy_id: str, spec_id: str, cre
                 status_code=exc.response.status_code,
                 media_type=exc.response.headers.get("content-type")
             )
-    print(f"Project ID: {project_id}")
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=timeout) as client:
         try:
-            resp = await client.get(f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite", headers={"Authorization": f"Bearer {access_token}"})
+            request_body = {
+                "emails": emails
+            }
+            resp = await client.post(f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite", headers={"Authorization": f"Bearer {access_token}"}, json=request_body)
             resp.raise_for_status()
             return resp.json()
         except httpx.HTTPStatusError as exc:
