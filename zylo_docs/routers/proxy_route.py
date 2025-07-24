@@ -10,6 +10,12 @@ from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
+from pydantic import BaseModel
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 # EXTERNAL_API_BASE = "https://api.zylosystems.com"
 EXTERNAL_API_BASE = "http://127.0.0.1:8000"
 router = APIRouter()
@@ -102,7 +108,8 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
         content=resp.content,
         media_type=resp.headers.get("content-type")
     )
-@router.post("pivot-current-spec/{spec_id}", include_in_schema=False)
+
+@router.get("/specs/{spec_id}", include_in_schema=False)
 async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
     if spec_id == "original":
@@ -179,28 +186,59 @@ async def get_project_members(request: Request, dummy_id: str, spec_id: str, bod
         try:
             resp = await client.get(f"{EXTERNAL_API_BASE}/projects", headers={"Authorization": f"Bearer {access_token}"})
             resp.raise_for_status()
-            project_id = resp.json().get("data", {})[0].get("project_id")
+            project_list = resp.json().get("data", [])
+            if not project_list:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "success": False,
+                        "message": "Since the user has never run zylo-ai, the project hasn’t been created yet.",
+                        "error": {
+                            "code": "PROJECT_NOT_FOUND",
+                            "details": "Please run zylo-ai first to create a project and then try again."
+                        }
+                    }
+                )
+            # 지금은 아이디 하나당 하나의 프로젝트만 있다고 가정하기 때문에 인덱스0에서 Project_id를 가져옴
+            project_id = project_list[0].get("project_id")
+        
         except httpx.HTTPStatusError as exc:
-            return Response(
-                content=exc.response.content,
+            logger.warning(f"HTTP error during project fetch: {exc}")
+            return JSONResponse(
                 status_code=exc.response.status_code,
-                media_type=exc.response.headers.get("content-type")
+                content={
+                    "success": False,
+                    "message": "Failed to fetch project list.",
+                    "error": {
+                        "code": "EXTERNAL_API_ERROR",
+                        "details": exc.response.text
+                    }
+                }
             )
 
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        try:
-            request_body = {
-                "emails": emails
-            }
-            resp = await client.post(f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite", headers={"Authorization": f"Bearer {access_token}"}, json=request_body)
-            resp.raise_for_status()
-            return resp.json()
-        except httpx.HTTPStatusError as exc:
-            return Response(
-                content=exc.response.content,
-                status_code=exc.response.status_code,
-                media_type=exc.response.headers.get("content-type")
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            resp = await client.post(
+                f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite",
+                headers={"Authorization": f"Bearer {access_token}"},
+                json={"emails": emails}
             )
+            resp.raise_for_status()
+            return JSONResponse(status_code=200, content=resp.json())
+
+    except httpx.HTTPStatusError as exc:
+        logger.warning(f"HTTP error during invite: {exc}")
+        return JSONResponse(
+            status_code=exc.response.status_code,
+            content={
+                "success": False,
+                "message": "Failed to send invitations.",
+                "error": {
+                    "code": "INVITE_FAILED",
+                    "details": exc.response.text
+                }
+            }
+        )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)
 async def proxy(request: Request, path: str):
         async with httpx.AsyncClient() as client:
@@ -217,7 +255,7 @@ async def proxy(request: Request, path: str):
                 params=request.query_params,
             )
             
-            print(resp.status_code, resp.headers, resp.content)
+
         headers_to_frontend = dict(resp.headers)
         # 프론트로 보내는 응답 객체 프론트와 인터페이스를 맞춰야함
         return Response(
