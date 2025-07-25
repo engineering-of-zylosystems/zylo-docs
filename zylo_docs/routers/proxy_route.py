@@ -10,7 +10,8 @@ from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
-EXTERNAL_API_BASE = "https://api.zylosystems.com"
+from zylo_docs.config import EXTERNAL_API_BASE
+
 router = APIRouter()
 security = HTTPBearer()
 class DocTypeEnum(str, Enum):
@@ -130,7 +131,10 @@ async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthor
                     content={
                         "success": False,
                         "message": "Failed to retrieve spec content",
-                        "details": f"specs/{spec_id} endpoint returned an error",
+                        "error":{
+                            "code": "GET_SPEC_ID_ERROR",
+                            "details": f"specs/{spec_id} endpoint returned an error",
+                        }
                     }
                 )
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], include_in_schema=False)

@@ -87,7 +87,9 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             content={
                 "success": False,
                 "message": "Test failed",
-                "code": "INTERNAL_LOGIC_TEST_FAILED",
-                "data": response.json() if response.content else None
+                "error":{
+                    "code": "INTERNAL_LOGIC_TEST_FAILED",
+                    "data": response.json() if response.content else None
+                }
             }
         )
