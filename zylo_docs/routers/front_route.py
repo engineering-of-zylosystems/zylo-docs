@@ -86,19 +86,19 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             return JSONResponse(
                 status_code=400,
                 content={
-                    "success": False,
-                    "message": "Test failed",
+                "success": True,
+                "message": "Request executed successfully",
+                "data": response.json() if response.content else None
+            })
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "message": "Test failed",
+                "error":{
                     "code": "INTERNAL_LOGIC_TEST_FAILED",
                     "data": response.json() if response.content else None
                 }
-            )
-        except:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "success": False,
-                    "message": "Test failed due to unexpected error",
-                    "code": "UNEXPECTED_ERROR",
-                    "data": None
-                }
-            )
+            }
+        )
+

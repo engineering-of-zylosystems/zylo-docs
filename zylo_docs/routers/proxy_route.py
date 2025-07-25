@@ -10,14 +10,12 @@ from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
+from zylo_docs.config import EXTERNAL_API_BASE
 from pydantic import BaseModel
 import logging
-
 logger = logging.getLogger(__name__)
 
 
-EXTERNAL_API_BASE = "https://api.zylosystems.com"
-# EXTERNAL_API_BASE = "http://127.0.0.1:8000"
 router = APIRouter()
 security = HTTPBearer()
 class DocTypeEnum(str, Enum):
@@ -139,7 +137,10 @@ async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthor
                     content={
                         "success": False,
                         "message": "Failed to retrieve spec content",
-                        "details": f"specs/{spec_id} endpoint returned an error",
+                        "error":{
+                            "code": "GET_SPEC_ID_ERROR",
+                            "details": f"specs/{spec_id} endpoint returned an error",
+                        }
                     }
                 )
 # pivot-current-spec post api 현재는 사용할 수 없음 프론트와 같이 변경 
