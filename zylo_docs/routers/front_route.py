@@ -59,21 +59,24 @@ async def get_operation_by_path(
 
 @router.post("/test-execution", include_in_schema=False)
 async def test_execution(request: Request, request_data: APIRequestModel):
-
-    target_operation = request_data.operation
-    if request_data.path_params:
-        for key, value in request_data.path_params.items():
+    body = await request.body()
+    print("🔍 Raw body from frontend:", body.decode())
+    
+    target_path = request_data.path
+    if request_data.input.get("path_params"):
+        for key, value in request_data.input.path_params.items():
             placeholder = f":{key}"
-            target_operation = target_operation.replace(placeholder, str(value))
+            target_path = target_path.replace(placeholder, str(value))
     transport = httpx.ASGITransport(app=request.app)
-
+    print(request_data.input)
+    
     async with httpx.AsyncClient(transport=transport) as client:
         try:
             response = await client.request(
                 method=request_data.method,
-                url=target_operation,
-                params=request_data.query_params,
-                json=request_data.body
+                url=target_path,
+                params=request_data.input.query_params,
+                json=request_data.input.body
             )
             if 200 <= response.status_code < 300:
                 return JSONResponse(
@@ -86,8 +89,8 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             return JSONResponse(
                 status_code=400,
                 content={
-                "success": True,
-                "message": "Request executed successfully",
+                "success": False,
+                "message": "Test failed",
                 "data": response.json() if response.content else None
             })
         except Exception:
@@ -98,7 +101,7 @@ async def test_execution(request: Request, request_data: APIRequestModel):
                     "message": "Test failed",
                     "error":{
                         "code": "INTERNAL_LOGIC_TEST_FAILED",
-                        "data": response.json() if response.content else None
+                        "details": "An error occurred while executing the request. Please check the server logs for more details."
                     }
                 }
             )
