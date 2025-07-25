@@ -9,8 +9,8 @@ class APIResponseBodyModel(BaseModel):
     value: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
 class APIInputModel(BaseModel):
-    path: Optional[Dict[str, Any]] = Field(default_factory=dict)
-    query: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    path_params: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    query_params: Optional[Dict[str, Any]] = Field(default_factory=dict)
     body: APIResponseBodyModel = Field(default_factory=APIResponseBodyModel)
 class APIRequestModel(BaseModel):
     method: str
