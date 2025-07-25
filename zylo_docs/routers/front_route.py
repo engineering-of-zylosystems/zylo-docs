@@ -62,21 +62,16 @@ async def get_operation_by_path(
 @router.post("/test-execution", include_in_schema=False)
 async def test_execution(request: Request, request_data: APIRequestModel):
     target_path = request_data.path
-    print(f"Original target path: {target_path}")
-    print(request_data.input.path_params)
     if request_data.input and request_data.input.path_params:
         for key, value in request_data.input.path_params.items():
-            print(key, value)
             placeholder = f"{{{key}}}"
             target_path = target_path.replace(placeholder, str(value))
-    print(f"Target path after replacing path parameters: {target_path}")
     # 자신의 서버로 경로 변경 
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
 
     # 별도의 HTTP 서버를 실행할 필요 없이 FastAPI 애플리케이션 인스턴스로 직접 요청을 보내기 위해
     # ASGITransport를 사용합니다.
     transport = httpx.ASGITransport(app=request.app)
-    print(f"Forwarding request to: {target_path}, method: {request_data.method}, query: {request_data.input.query_params if request_data.input else None}, body: {request_data.input.body.value if request_data.input else None}")
     async with httpx.AsyncClient(transport=transport) as client:
         try:
 
