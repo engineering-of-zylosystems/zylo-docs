@@ -62,32 +62,28 @@ async def get_operation_by_path(
 @router.post("/test-execution", include_in_schema=False)
 async def test_execution(request: Request, request_data: APIRequestModel):
     target_path = request_data.path
-
-    if request_data.input and request_data.input.path:
-        for key, value in request_data.input.path.items():
-            placeholder = f":{key}"
+    print(f"Original target path: {target_path}")
+    print(request_data.input.path_params)
+    if request_data.input and request_data.input.path_params:
+        for key, value in request_data.input.path_params.items():
+            print(key, value)
+            placeholder = f"{{{key}}}"
             target_path = target_path.replace(placeholder, str(value))
-
-
-    if target_path.startswith('/') and not (target_path.startswith('http://') or target_path.startswith('https://')):
-        # request.base_url은 FastAPi가 실행되는 서버의 기본 URL입니다.
-        # urllib.parse.urljoin을 사용하여 base_url과 target_path를 올바르게 조합합니다.
-        # request.base_url은 이미 '/'로 끝날 수 있으며 (예: 'http://localhost:8001/'),
-        # target_path가 '/'로 시작하더라도 urljoin이 중복 슬래시 없이 올바르게 처리합니다.
-        target_path = urllib.parse.urljoin(str(request.base_url), target_path)
-    # --- 추가된 로직 끝 ---
+    print(f"Target path after replacing path parameters: {target_path}")
+    # 자신의 서버로 경로 변경 
+    target_path = urllib.parse.urljoin(str(request.base_url), target_path)
 
     # 별도의 HTTP 서버를 실행할 필요 없이 FastAPI 애플리케이션 인스턴스로 직접 요청을 보내기 위해
     # ASGITransport를 사용합니다.
     transport = httpx.ASGITransport(app=request.app)
-
+    print(f"Forwarding request to: {target_path}, method: {request_data.method}, query: {request_data.input.query_params if request_data.input else None}, body: {request_data.input.body.value if request_data.input else None}")
     async with httpx.AsyncClient(transport=transport) as client:
         try:
 
             response = await client.request(
                 method=request_data.method,
                 url=target_path,
-                params=request_data.input.query if request_data.input else None,
+                params=request_data.input.query_params if request_data.input else None,
                 json=request_data.input.body.value if request_data.input else None
             )
 
@@ -108,7 +104,7 @@ async def test_execution(request: Request, request_data: APIRequestModel):
                     error_content = response.text
 
                 return JSONResponse(
-                    status_code=response.status_code, # 대상의 상태 코드를 사용합니다.
+                    status_code=response.status_code,
                     content={
                         "success": False,
                         "message": f"An error was returned from the user backend ({response.status_code})",
@@ -167,7 +163,6 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             )
         except Exception as e:
             # 이는 이 프록시 함수 실행 중에 발생할 수 있는 다른 예상치 못한 오류를 위한
-            # 일반적인 포괄적 예외 처리입니다.
             return JSONResponse(
                 status_code=500,
                 content={
