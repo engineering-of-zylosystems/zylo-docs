@@ -247,7 +247,7 @@ async def proxy(request: Request, path: str):
             body = await request.body()
             headers = dict(request.headers)
             headers.pop("host", None) 
-
+            
             resp = await client.request(
                 method=request.method,
                 url=proxy_url,
