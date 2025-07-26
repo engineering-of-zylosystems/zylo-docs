@@ -68,7 +68,7 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             target_path = target_path.replace(placeholder, str(value))
     # 자신의 서버로 경로 변경 
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
-
+    print(f"Target path after processing: {target_path}")
     # 별도의 HTTP 서버를 실행할 필요 없이 FastAPI 애플리케이션 인스턴스로 직접 요청을 보내기 위해
     # ASGITransport를 사용합니다.
     transport = httpx.ASGITransport(app=request.app)
