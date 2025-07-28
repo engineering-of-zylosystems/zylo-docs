@@ -29,6 +29,7 @@ class ZyloAIRequestBody(BaseModel):
     doc_type: DocTypeEnum
 class InviteRequestBody(BaseModel):
     emails: list[str] = Field(..., description="List of emails to invite")
+    
 @router.post("/zylo-ai", include_in_schema=False)
 async def create_zylo_ai(request: Request, body: ZyloAIRequestBody,credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
