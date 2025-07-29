@@ -34,7 +34,7 @@ uvicorn main:app --reload
 ```
 After starting the server, open your browser and visit the root URL followed by **/zylo-docs**.
 
-<img width="1497" height="802" alt="스크린샷 2025-07-29 오후 4 58 33" src="https://github.com/user-attachments/assets/1a4712ea-7fc0-40cb-8da0-0997d2159676" />
+<img src="https://github.com/user-attachments/assets/1a4712ea-7fc0-40cb-8da0-0997d2159676" width="100%" />
 
 ## sign up and sign in zylo
 
@@ -46,7 +46,7 @@ After starting the server, open your browser and visit the root URL followed by 
 To use the Zylo service, please sign up or sign in.
 
 ## use zylo-AI function
-<img width="1186" height="896" alt="Frame 9" src="https://github.com/user-attachments/assets/7719a629-18af-4f46-9581-b1b54deb3a0d" />
+<img width="100%" alt="Frame 9" src="https://github.com/user-attachments/assets/7719a629-18af-4f46-9581-b1b54deb3a0d" />
 
 By clicking the magic wand icon, you can use Zylo AI to generate descriptions and test cases for your API documentation.
 
