@@ -1,114 +1,58 @@
-# Zylo Docs
+# project description
 
-The world's best API docs for developers.
+<div align="center"> 
+   <img width="772" height="280" alt="zylo-docs" src="https://github.com/user-attachments/assets/3c4c24ac-708a-42d5-b673-90c8b3cd0816" />
+   <br />
+   <b><em>build the world’s best API docs highly integrated with FastAPI for developers</em></b>
+</div>
+<p align="center">
 
-## poetry 세팅 방법
+<a href="" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/zylo-docs?color=%2334D058" alt="Supported Python versions">
+</a>
+</p>
 
-### 방법.1 Poetry 깃허브 레포에서 직접 다운로드
+---
+**zylo-docs is built on FastAPI and automatically generates APIs written by users, adds descriptions using AI, and even supports API testing**
 
-```
-curl -sSL https://install.python-poetry.org | python3 -
-```
-
-**방법.2 pipx를 이용한 다운로드**
-
-```
-pipx install poetry
-```
-
-**설치 확인**
-
-```
-poetry --version
-```
-
-**의존성 라이브러리 설치**
-
-```
-poetry install
-```
-
-**VS Code 연동**(vscode 말고도 에터가 poetry 가상환경을 인식못하는 경우 수동으로 연결)
-
-1. VS Code에서 프로젝트 폴더 열기
-2. Cmd+Shift+P → Python: Select Interpreter
-3. .venv/bin/python 선택
-   만약 vscode가 자동으로 가상환경을 찾아서 등록해야 하는 작업을 해주면 된다
-
-**poetry 실행 명령어**
-```
-poetry run uvicorn zylo-docs.main:app --port 8001 --reload
-```
-
-## Installation
-
-### From PyPI (when published)
-
-```bash
-pip install zylo-docs
-```
-
-### From source
-
-```bash
-git clone https://github.com/yourusername/zylo-docs.git
-cd zylo-docs
-pip install -e .
-```
-
-## Usage
-
-### Integrate with your FastAPI app
-
-Zylo Docs is a FastAPI plugin that adds a custom HTML-based API documentation UI at the `/zylo` route.
-
-**Example:**
-
+## A Simple Example
 ```python
-from fastapi import FastAPI
-from zylo_docs.integration import mount_zylo_docs
+# zylo-docs boilerplate
+from zylo_docs.integration import add_zylo_docs
 
-app = FastAPI(title="My API")
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, FastAPI!"
 
-@app.get("/users")
-async def get_users():
-    return {"users": ["user1", "user2"]}
-
-# Integrate Zylo Docs UI with a single line
-mount_zylo_docs(app)
+# Add at the bottom
+add_zylo_docs(app)
 ```
 
-### Run the Zylo Docs server (for development/testing)
-
-You can run the Zylo Docs server in two ways:
-
-**1. Using the CLI (recommended for quick start):**
-
-```bash
-zylo-docs --reload
+## Running the FastAPI Server
+```python
+uvicorn main:app --reload
 ```
+After starting the server, open your browser and visit the root URL followed by **/zylo-docs**.
 
-**2. Using uvicorn directly:**
+<img width="1497" height="802" alt="스크린샷 2025-07-29 오후 4 58 33" src="https://github.com/user-attachments/assets/1a4712ea-7fc0-40cb-8da0-0997d2159676" />
 
-```bash
-uvicorn zylo_docs.main:app --reload
-```
+## sign up and sign in zylo
 
-### Access Zylo Docs
 
-- Zylo UI: [http://localhost:8000/zylo](http://localhost:8000/zylo)
-- OpenAPI Spec: [http://localhost:8000/openapi.json](http://localhost:8000/openapi.json)
-- Your API: [http://localhost:8000/users](http://localhost:8000/users)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/11dc4408-a772-4783-886a-f65881654673" height="500px" />
+  <img src="https://github.com/user-attachments/assets/3ce01104-c784-43e3-a0e0-6dcb54a4d128" height="500px" />
+</p>
+To use the Zylo service, please sign up or sign in.
 
-### How it works
+## use zylo-AI function
+<img width="1186" height="896" alt="Frame 9" src="https://github.com/user-attachments/assets/7719a629-18af-4f46-9581-b1b54deb3a0d" />
 
-- The UI served at `/zylo` is located at `zylo_docs/static/index.html`.
-- Zylo Docs automatically loads your FastAPI OpenAPI spec from `/openapi.json` and displays it in the UI.
-- You can integrate Zylo Docs into any FastAPI app with a single line.
+By clicking the magic wand icon, you can use Zylo AI to generate descriptions and test cases for your API documentation.
 
 ## Development
 
-- Python 3.8+
+- Python 3.10+
 - FastAPI, Uvicorn
 
 ## License
