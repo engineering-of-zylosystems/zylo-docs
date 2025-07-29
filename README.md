@@ -46,7 +46,8 @@ After starting the server, open your browser and visit the root URL followed by 
 To use the Zylo service, please sign up or sign in.
 
 ## use zylo-AI function
-<img width="100%" alt="Frame 9" src="https://github.com/user-attachments/assets/7719a629-18af-4f46-9581-b1b54deb3a0d" />
+<img width="100%" alt="스크린샷 2025-07-29 오후 5 11 22 1 (1)" src="https://github.com/user-attachments/assets/45d91160-02f8-42bb-9574-2111b734fae4" />
+
 
 By clicking the magic wand icon, you can use Zylo AI to generate descriptions and test cases for your API documentation.
 
