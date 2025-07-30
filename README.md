@@ -49,13 +49,12 @@ You need to start the server using **Uvicorn**.
 To enhance your documentation with AI, please sign in to zylo-docs.
 
 ## [4/5] Use the Zylo AI function to upgrade your docs
-<img width="100%" alt="zylo-docs-magic-wand" src="https:![Uploading Screenshot 2025-07-30 at 6.17.03 PM.png…]()
-//github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
+<img width="100%" alt="zylo-docs-magic-wand" src="https://github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
 Click the `magic wand icon` in the top-right corner to activate Zylo AI, which will generate detailed descriptions and test cases for each of your API endpoints.
 
-### Tara! Your API specs are now upgraded and more user-friendly with zylo-docs. Let's check this out!
+### Tara! Look at the red dot in the top-left corner! It is completed. Let's check this out!
 <img width="1534" height="1031" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
-After you find the red dot on the version selector, you can find the lastest one. Once you click it, you can check the new one filled with rich content.
+After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
 
 ## [5/5] Share your API docs with your team
