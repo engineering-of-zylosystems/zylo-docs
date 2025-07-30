@@ -1,6 +1,6 @@
 [project]
 name = "zylib-test"
-version = "0.0.63"
+version = "0.0.64"
 
 description = ""
 authors = [
