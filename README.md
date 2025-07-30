@@ -1,5 +1,3 @@
-# project description
-
 <div align="center"> 
    <img width="772" height="280" alt="zylo-docs" src="https://github.com/user-attachments/assets/3c4c24ac-708a-42d5-b673-90c8b3cd0816" />
    <br />
