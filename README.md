@@ -3,7 +3,7 @@
 <div align="center"> 
    <img width="772" height="280" alt="zylo-docs" src="https://github.com/user-attachments/assets/3c4c24ac-708a-42d5-b673-90c8b3cd0816" />
    <br />
-   <b><em>build the world’s best API docs highly integrated with FastAPI for developers</em></b>
+   <b><em>Build the world’s best API docs highly integrated with FastAPI for developers</em></b>
 </div>
 <p align="center">
 
@@ -13,47 +13,51 @@
 </p>
 
 ---
-**zylo-docs is built on FastAPI and automatically generates APIs written by users, adds descriptions using AI, and even supports API testing**
+**Writing technical documentation like API specs is often a burden for software engineers — it’s not their expertise, and rarely a top priority. That’s where Zylo-docs comes in. Zylo-docs seamlessly integrates with FastAPI and automatically generates OpenAPI-compliant specs. With powerful AI assistance, it helps developers create clear, user-friendly, and rich documentation with minimal effort. Think of it as a more intuitive, AI-powered alternative to Swagger.**
 
-## A Simple Example
+## Getting Started
 ```python
-# zylo-docs boilerplate
+# Please declare it like this.
 from zylo_docs.integration import add_zylo_docs
 
 @app.get("/")
 async def read_root():
     return {"message": "Hello, FastAPI!"
-
-# Add at the bottom
+    
+# You need to add the following code at the bottom of your entry point file
 add_zylo_docs(app)
 ```
+
 
 ## Running the FastAPI Server
 ```python
 uvicorn main:app --reload
 ```
-After starting the server, open your browser and visit the root URL followed by **/zylo-docs**.
+You need to start the server using Uvicorn.
 
-<img src="https://github.com/user-attachments/assets/1a4712ea-7fc0-40cb-8da0-0997d2159676" width="100%" />
+**After starting the server, open your browser and visit the root URL followed by http://localhost:8000/zylo-docs.**
 
-## sign up and sign in zylo
+<img width="100%" alt="Screenshot 2025-07-30 at 9 01 27 AM" src="https://github.com/user-attachments/assets/5d88e0ca-d5f4-4227-9c2b-aaa7dda65f78" />
+
+## Sign up and sign in zylo
 
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/11dc4408-a772-4783-886a-f65881654673" height="500px" />
-  <img src="https://github.com/user-attachments/assets/3ce01104-c784-43e3-a0e0-6dcb54a4d128" height="500px" />
+  <img width="50%" alt="Screenshot 2025-07-30 at 9 04 09 AM" src="https://github.com/user-attachments/assets/9097918a-4e02-4ea8-b6de-de58f6f36bf9" />
+
 </p>
-To use the Zylo service, please sign up or sign in.
+To use the Zylo ai service, please sign in.
 
-## use zylo-AI function
-<img width="100%" alt="zylo-description" src="https://github.com/user-attachments/assets/3e956cea-f33e-4a98-9454-e24c99aac0d4" />
-
-
+## Use zylo-docs ai function
+<img width="100%" height="1052" alt="Frame 10" src="https://github.com/user-attachments/assets/2c058f30-3dba-4b15-a69d-5ca5223629a3" />
 
 By clicking the magic wand icon, you can use Zylo AI to generate descriptions and test cases for your API documentation.
 
-## Development
+## Sharing API docs
+<img width="1428" height="1125" alt="Screenshot 2025-07-30 at 9 10 47 AM" src="https://github.com/user-attachments/assets/d9d261af-1157-4f55-bc0c-e85b8885f104" />
+Click the Publish button to share your API documentation with anyone you want.
 
+## Development
 - Python 3.10+
 - FastAPI, Uvicorn
 
