@@ -42,6 +42,27 @@ jobs:
           echo "--- 기존 dist 삭제 ---"
           rm -rf ./dist
 
+          echo "--- Git 설정 ---"
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+          echo "--- 버전 올리기 ---"
+          poetry version patch
+          VERSION=$(poetry version -s)
+          echo "➡️ 새 버전: $VERSION"
+
+          echo "--- 변경사항 커밋 ---"
+          # pyproject.toml 및 poetry.lock 변경사항을 커밋합니다.
+          git add pyproject.toml
+          if [ -f poetry.lock ]; then
+            git add poetry.lock
+          fi
+          git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
+
+          echo "--- 커밋 푸시 ---"
+          # GITHUB_TOKEN을 사용하여 현재 브랜치(staging)로 푸시합니다.
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:staging
+
           echo "--- 빌드 ---"
           poetry build
 
