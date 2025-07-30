@@ -27,13 +27,14 @@ add_zylo_docs(app)
 ```
 
 
-## Running the FastAPI Server
+## Running the FastAPI Server (http:\/\/localhost\:8000\/zylo-docs)
 ```python
 uvicorn main:app --reload
 ```
-You need to start the server using Uvicorn.
+You need to start the server using **Uvicorn**.
 
-**After starting the server, open your browser and visit the root URL followed by http://localhost:8000/zylo-docs.**
+**After launching the server, navigate to http:\/\/localhost\:8000\/zylo-docs in your browser.** </br>
+(If the development server port changes, the port number in the execution command must also change)
 
 <img width="100%" alt="Screenshot 2025-07-30 at 9 01 27 AM" src="https://github.com/user-attachments/assets/5d88e0ca-d5f4-4227-9c2b-aaa7dda65f78" />
 
@@ -47,13 +48,15 @@ You need to start the server using Uvicorn.
 To use the Zylo ai service, please sign in.
 
 ## Use zylo-docs ai function
-<img width="100%" alt="Frame 10" src="https://github.com/user-attachments/assets/2c058f30-3dba-4b15-a69d-5ca5223629a3" />
+<img width="100%" alt="zylo-docs-magic-wand" src="https://github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
 
-By clicking the magic wand icon, you can use Zylo AI to generate descriptions and test cases for your API documentation.
+
+By clicking the magic wand icon in the blue square, you can use Zylo AI to generate descriptions and test cases for your API documentation.
 
 ## Sharing API docs
 <img width="100%" alt="Screenshot 2025-07-30 at 9 10 47 AM" src="https://github.com/user-attachments/assets/d9d261af-1157-4f55-bc0c-e85b8885f104" />
-Click the Publish button to share your API documentation with anyone you want.
+
+Click the `Publish button`  to share your API documentation with anyone you want.
 
 ## Development
 - Python 3.10+
