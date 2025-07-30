@@ -144,7 +144,7 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
 #                         }
 #                     }
 #                 )
-# pivot-current-spec post api 현재는 사용할 수 없음 프론트와 같이 변경 
+
 @router.post("/pivot-current-spec/{spec_id}", include_in_schema=False)
 async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
