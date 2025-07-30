@@ -49,12 +49,12 @@ You need to start the server using Uvicorn.
 To use the Zylo ai service, please sign in.
 
 ## Use zylo-docs ai function
-<img width="100%" height="1052" alt="Frame 10" src="https://github.com/user-attachments/assets/2c058f30-3dba-4b15-a69d-5ca5223629a3" />
+<img width="100%" alt="Frame 10" src="https://github.com/user-attachments/assets/2c058f30-3dba-4b15-a69d-5ca5223629a3" />
 
 By clicking the magic wand icon, you can use Zylo AI to generate descriptions and test cases for your API documentation.
 
 ## Sharing API docs
-<img width="1428" height="1125" alt="Screenshot 2025-07-30 at 9 10 47 AM" src="https://github.com/user-attachments/assets/d9d261af-1157-4f55-bc0c-e85b8885f104" />
+<img width="100%" alt="Screenshot 2025-07-30 at 9 10 47 AM" src="https://github.com/user-attachments/assets/d9d261af-1157-4f55-bc0c-e85b8885f104" />
 Click the Publish button to share your API documentation with anyone you want.
 
 ## Development
