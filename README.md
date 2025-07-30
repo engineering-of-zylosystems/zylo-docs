@@ -53,7 +53,7 @@ To enhance your documentation with AI, please sign in to zylo-docs.
 //github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
 Click the `magic wand icon` in the top-right corner to activate Zylo AI, which will generate detailed descriptions and test cases for each of your API endpoints.
 
-### Tara! Your API specs are now upgraded and more user-friendly with zylo-docs.
+### Tara! Your API specs are now upgraded and more user-friendly with zylo-docs. Let's check this out!
 <img width="1534" height="1031" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
 After you find the red dot on the version selector, you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
