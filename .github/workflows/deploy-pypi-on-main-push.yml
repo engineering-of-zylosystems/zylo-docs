@@ -60,8 +60,8 @@ jobs:
           git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
 
           echo "--- 커밋 푸시 ---"
-          # GITHUB_TOKEN을 사용하여 현재 브랜치(staging)로 푸시합니다.
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:staging
+          # GITHUB_TOKEN을 사용하여 현재 브랜치(main)로 푸시합니다.
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
 
           echo "--- 빌드 ---"
           poetry build
