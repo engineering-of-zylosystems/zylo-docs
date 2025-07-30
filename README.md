@@ -39,7 +39,7 @@ You need to start the server using **Uvicorn**.
 **Once the server is running, open your browser and go to: 👉 [http://localhost:8000/zylo-docs](http://localhost:8000/zylo-docs)** </br>
 (⚠️ If your development server runs on a different port, update the URL accordingly!)
 
-### Tara! You can now view beautifully structured API specs with zylo-docs.
+### Tada! You can now view beautifully structured API specs with zylo-docs.
 <img width="100%" alt="Screenshot 2025-07-30 at 9 01 27 AM" src="https://github.com/user-attachments/assets/5d88e0ca-d5f4-4227-9c2b-aaa7dda65f78" />
 
 ## [3/5] To use Zylo AI, sign up and sign in to zylo.
@@ -52,7 +52,7 @@ To enhance your documentation with AI, please sign in to zylo-docs.
 <img width="100%" alt="zylo-docs-magic-wand" src="https://github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
 Click the `magic wand icon` in the top-right corner to activate Zylo AI, which will generate detailed descriptions and test cases for each of your API endpoints.
 
-### Tara! Look at the red dot in the top-left corner! It is completed. Let's check this out!
+### Tada! Look at the red dot in the top-left corner! It is completed. Let's check this out!
 <img width="1534" height="1031" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
 After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
