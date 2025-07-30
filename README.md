@@ -36,7 +36,7 @@ uvicorn main:app --reload
 ```
 You need to start the server using **Uvicorn**.
 
-**Once the server is running, open your browser and go to: 👉 http:\/\/localhost\:8000\/zylo-docs** </br>
+**Once the server is running, open your browser and go to: 👉 [http://localhost:8000/zylo-docs](http://localhost:8000/zylo-docs)** </br>
 (⚠️ If your development server runs on a different port, update the URL accordingly!)
 
 ### Tara! You can now view beautifully structured API specs with zylo-docs.
