@@ -16,8 +16,7 @@
 ## [1/5] Get Started (Add boilerplate code)
 ```python
 from fastapi import FastAPI
-# Please declare it at the top.
-from zylo_docs.integration import add_zylo_docs
+from zylo_docs.integration import add_zylo_docs # 👈 Add this import at the top
 
 app = FastAPI()
 
@@ -25,7 +24,7 @@ app = FastAPI()
 async def read_root():
     return {"message": "Hello, FastAPI!"}
     
-# You need to add the following code at the bottom of your entry point file(e.g main.py)
+# 👇 Add this at the bottom of your entry point file (e.g., main.py)
 add_zylo_docs(app)
 ```
 
@@ -35,6 +34,8 @@ add_zylo_docs(app)
 uvicorn main:app --reload
 ```
 You need to start the server using **Uvicorn**.
+
+> ⚡️ **If your server is already running, you can skip this step.**
 
 **Once the server is running, open your browser and go to: 👉 [http://localhost:8000/zylo-docs](http://localhost:8000/zylo-docs)** </br>
 (⚠️ If your development server runs on a different port, update the URL accordingly!)
@@ -53,7 +54,7 @@ To enhance your documentation with AI, please sign in to zylo-docs.
 Click the `magic wand icon` in the top-right corner to activate Zylo AI, which will generate detailed descriptions and test cases for each of your API endpoints.
 
 ### Tada! Look at the red dot in the top-left corner! It is completed. Let's check this out!
-<img width="1534" height="1031" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
 After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
 
