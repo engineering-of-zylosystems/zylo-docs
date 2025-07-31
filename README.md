@@ -23,7 +23,11 @@ app = FastAPI()
 @app.get("/")
 async def read_root():
     return {"message": "Hello, FastAPI!"}
-    
+
+# ...
+# ...
+# 👇👇👇 KEEP SCROLLING... you're not done yet! 👇👇👇
+
 # 👇 Add this at the bottom of your entry point file (e.g., main.py)
 add_zylo_docs(app)
 ```
