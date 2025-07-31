@@ -108,42 +108,6 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
         media_type=resp.headers.get("content-type")
     )
 
-# @router.get("/specs/{spec_id}", include_in_schema=False)
-# async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
-#     access_token = credentials.credentials
-#     if spec_id == "original":
-#         service: OpenApiService = request.app.state.openapi_service
-#         service.set_current_spec(request.app.openapi())
-#         return JSONResponse(
-#             content={
-#                 "success": True,
-#                 "message": "Original OpenAPI spec retrieved successfully",
-#             }
-#         )
-#     else:
-#         async with httpx.AsyncClient() as client:
-#             try:
-#                 spec_content = await get_spec_content_by_id(spec_id, client, access_token)
-#                 service: OpenApiService = request.app.state.openapi_service
-#                 service.set_current_spec(spec_content)
-#                 return JSONResponse(
-#                     content={
-#                         "success": True,
-#                         "message": "Spec retrieved successfully",
-#                     }
-#                 )
-#             except httpx.HTTPStatusError as exc:
-#                 return JSONResponse(
-#                     status_code=exc.response.status_code,
-#                     content={
-#                         "success": False,
-#                         "message": "Failed to retrieve spec content",
-#                         "error":{
-#                             "code": "GET_SPEC_ID_ERROR",
-#                             "details": f"specs/{spec_id} endpoint returned an error",
-#                         }
-#                     }
-#                 )
 
 @router.post("/pivot-current-spec/{spec_id}", include_in_schema=False)
 async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
