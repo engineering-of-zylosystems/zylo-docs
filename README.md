@@ -16,7 +16,8 @@
 ## [1/5] Get Started (Add boilerplate code)
 ```python
 from fastapi import FastAPI
-from zylo_docs.integration import add_zylo_docs # 👈 Add this import at the top
+# 👇 [1/2] Add this import at the top
+from zylo_docs.integration import add_zylo_docs
 
 app = FastAPI()
 
@@ -28,7 +29,7 @@ async def read_root():
 # ...
 # 👇👇👇 KEEP SCROLLING... you're not done yet! 👇👇👇
 
-# 👇 Add this at the bottom of your entry point file (e.g., main.py)
+# 👇 [2/2] Add this at the bottom of your entry point file (e.g., main.py)
 add_zylo_docs(app)
 ```
 
