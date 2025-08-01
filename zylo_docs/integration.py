@@ -26,7 +26,7 @@ def add_zylo_docs(app: FastAPI):
     app.include_router(proxy_route.router, prefix="/zylo-docs/api", tags=["proxy"])
     app.add_middleware(ExceptionHandlingMiddleware)
 
-    @app.get("/zylo-docs/{full_path:path}", include_in_schema=False)
+    @app.get("/zylo-docs{full_path:path}", include_in_schema=False)
     async def serve_react_app():
         return FileResponse(os.path.join(os.path.dirname(__file__), "static", "index.html"))
 
