@@ -1,6 +1,4 @@
 from fastapi import APIRouter,Query, Request,HTTPException
-from fastapi.responses import Response
-from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.user_server_service import get_user_operation,get_user_operation_by_path
 from zylo_docs.schemas.schema_data import SchemaResponseModel
 from zylo_docs.schemas.schema_data import APIRequestModel
@@ -115,7 +113,6 @@ async def test_execution(request: Request, request_data: APIRequestModel):
                 success_content = response.json()
             except ValueError:
                 success_content = response.text
-
             return JSONResponse(
                 status_code=response.status_code,
                 content={
