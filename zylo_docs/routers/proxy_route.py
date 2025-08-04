@@ -176,7 +176,7 @@ async def download_current_spec(request: Request, spec_id: str = Query(..., desc
                 )
     
 @router.post("/projects/{dummy_id}/specs/{spec_id}/invite", include_in_schema=False)
-async def get_project_members(request: Request, dummy_id: str, spec_id: str, body: InviteRequestBody , credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_project_members(dummy_id: str, spec_id: str, body: InviteRequestBody , credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
     project_id = ""
     emails = body.emails

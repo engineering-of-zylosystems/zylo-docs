@@ -32,6 +32,17 @@ jobs:
           echo "🛠 Changing package name in pyproject.toml to 'zylo-docs'"
           sed -i 's/^name = "zylib-test"/name = "zylo-docs"/' pyproject.toml
 
+      - name: Restore Main Branch Version
+        id: get_version
+        run: |
+          echo "🔄 Restoring version from main branch before bumping..."
+          # Extracts the version from the pyproject.toml of the commit before the merge/push on main
+          MAIN_BRANCH_VERSION=$(git show HEAD~1:pyproject.toml | grep 'version = ' | awk -F '"' '{print $2}')
+          echo "Found version $MAIN_BRANCH_VERSION on main branch."
+          # Sets the current pyproject.toml to that old version
+          poetry version $MAIN_BRANCH_VERSION
+          echo "✅ Version restored to $MAIN_BRANCH_VERSION."
+
       - name: Deploy to PyPI
         env:
           TWINE_USERNAME: __token__
