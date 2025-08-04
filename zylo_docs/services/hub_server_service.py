@@ -19,3 +19,4 @@ async def get_spec_content_by_id(spec_id: str, client: httpx.AsyncClient, access
                 "response": exc.response.json(),
             }
         )
+

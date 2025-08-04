@@ -1,6 +1,4 @@
 from fastapi import APIRouter,Query, Request,HTTPException
-from fastapi.responses import Response
-from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.user_server_service import get_user_operation,get_user_operation_by_path
 from zylo_docs.schemas.schema_data import SchemaResponseModel
 from zylo_docs.schemas.schema_data import APIRequestModel
@@ -68,8 +66,7 @@ async def test_execution(request: Request, request_data: APIRequestModel):
             target_path = target_path.replace(placeholder, str(value))
     # 자신의 서버로 경로 변경 
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
-    # 별도의 HTTP 서버를 실행할 필요 없이 FastAPI 애플리케이션 인스턴스로 직접 요청을 보내기 위해
-    # ASGITransport를 사용합니다.
+    # 별도의 HTTP 서버를 실행할 필요 없이 자기 자신에게 요청을 보내기 위해 ASGITransport 사용
     transport = httpx.ASGITransport(app=request.app)
     async with httpx.AsyncClient(transport=transport) as client:
         try:
@@ -116,7 +113,6 @@ async def test_execution(request: Request, request_data: APIRequestModel):
                 success_content = response.json()
             except ValueError:
                 success_content = response.text
-
             return JSONResponse(
                 status_code=response.status_code,
                 content={

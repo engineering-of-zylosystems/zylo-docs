@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, Query
 from fastapi import Request, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
@@ -142,8 +142,41 @@ async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthor
                         "details": f"specs/{spec_id} endpoint returned an error",
                     }
                 )
+            
+@router.get("/download-spec", include_in_schema=False)
+async def download_current_spec(request: Request, spec_id: str = Query(..., description="OpenAPI spec ID"), credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
+    print(f"Downloading spec with ID: {spec_id}")
+    if spec_id == "original":
+        return {
+            "success": True,
+            "message": "Original OpenAPI spec retrieved successfully",
+            "data": request.app.openapi()
+        }
+            
+    else:
+        async with httpx.AsyncClient() as client:
+            try:
+                spec = await get_spec_content_by_id(spec_id, client, access_token)
+                service: OpenApiService = request.app.state.openapi_service
+                service.set_current_spec(spec)
+                return {
+                    "success": True,
+                    "message": "Spec retrieved successfully",
+                    "data": spec
+                }
+            except httpx.HTTPStatusError as exc:
+                return JSONResponse(
+                    status_code=exc.response.status_code,
+                    content={
+                        "success": False,
+                        "message": "Failed to retrieve spec content",
+                        "details": f"specs/{spec_id} endpoint returned an error",
+                    }
+                )
+    
 @router.post("/projects/{dummy_id}/specs/{spec_id}/invite", include_in_schema=False)
-async def get_project_members(request: Request, dummy_id: str, spec_id: str, body: InviteRequestBody , credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_project_members(dummy_id: str, spec_id: str, body: InviteRequestBody , credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
     project_id = ""
     emails = body.emails
