@@ -32,16 +32,30 @@ jobs:
           echo "🛠 Changing package name in pyproject.toml to 'zylo-docs'"
           sed -i 's/^name = "zylib-test"/name = "zylo-docs"/' pyproject.toml
 
-      - name: Restore Main Branch Version
+      - name: Calculate Next Version from Git Tags
         id: get_version
         run: |
-          echo "🔄 Restoring version from main branch before bumping..."
-          # Extracts the version from the pyproject.toml of the commit before the merge/push on main
-          MAIN_BRANCH_VERSION=$(git show HEAD~1:pyproject.toml | grep 'version = ' | awk -F '"' '{print $2}')
-          echo "Found version $MAIN_BRANCH_VERSION on main branch."
-          # Sets the current pyproject.toml to that old version
-          poetry version $MAIN_BRANCH_VERSION
-          echo "✅ Version restored to $MAIN_BRANCH_VERSION."
+          echo "🔄 Calculating next version from Git tags..."
+          git fetch --tags
+          # Get the latest tag, sort them by version number
+          LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No tags found. Starting with version 0.0.1."
+            NEXT_VERSION="0.0.1"
+          else
+            echo "Latest tag is $LATEST_TAG"
+            # Remove 'v' prefix if it exists
+            VERSION=${LATEST_TAG#v}
+            # Split version into parts
+            IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+            # Increment patch version
+            VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
+            NEXT_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
+          fi
+
+          echo "Calculated next version: $NEXT_VERSION"
+          echo "::set-output name=version::$NEXT_VERSION"
 
       - name: Deploy to PyPI
         env:
@@ -58,21 +72,20 @@ jobs:
           git config user.email github-actions[bot]@users.noreply.github.com
 
           echo "--- 버전 올리기 ---"
-          poetry version patch
-          VERSION=$(poetry version -s)
+          VERSION=${{ steps.get_version.outputs.version }}
+          poetry version $VERSION
           echo "➡️ 새 버전: $VERSION"
 
           echo "--- 변경사항 커밋 ---"
-          # pyproject.toml 및 poetry.lock 변경사항을 커밋합니다.
           git add pyproject.toml
           if [ -f poetry.lock ]; then
             git add poetry.lock
           fi
           git commit -m "🔖 Bump version to $VERSION for PyPI release [skip ci]" || echo "No changes to commit"
 
-          echo "--- 커밋 푸시 ---"
-          # GITHUB_TOKEN을 사용하여 현재 브랜치(main)로 푸시합니다.
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+          echo "--- 새 태그 생성 및 푸시 ---"
+          git tag "v$VERSION"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main --tags
 
           echo "--- 빌드 ---"
           poetry build
