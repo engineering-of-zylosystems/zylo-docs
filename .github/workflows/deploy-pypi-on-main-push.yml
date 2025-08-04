@@ -55,7 +55,7 @@ jobs:
           fi
 
           echo "Calculated next version: $NEXT_VERSION"
-          echo "::set-output name=version::$NEXT_VERSION"
+          echo "version=$NEXT_VERSION" >> $GITHUB_OUTPUT
 
       - name: Deploy to PyPI
         env:

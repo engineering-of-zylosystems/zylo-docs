@@ -1,7 +1,7 @@
 [project]
 
-name = "zylo-docs"
-version = "0.0.80"
+name = "zylib-test"
+version = "0.0.83"
 
 
 description = ""
