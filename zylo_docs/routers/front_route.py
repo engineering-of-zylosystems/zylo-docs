@@ -64,13 +64,12 @@ async def test_execution(request: Request, request_data: APIRequestModel):
         for key, value in request_data.input.path_params.items():
             placeholder = f"{{{key}}}"
             target_path = target_path.replace(placeholder, str(value))
-    # 자신의 서버로 경로 변경 
+    # 자기 자신의 경로로 path 변경
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
     # 별도의 HTTP 서버를 실행할 필요 없이 자기 자신에게 요청을 보내기 위해 ASGITransport 사용
     transport = httpx.ASGITransport(app=request.app)
     async with httpx.AsyncClient(transport=transport) as client:
         try:
-
             response = await client.request(
                 method=request_data.method,
                 url=target_path,
