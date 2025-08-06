@@ -1,1 +1,1 @@
-from .integration import add_zylo_docs
+from .integration import zylo_docs
