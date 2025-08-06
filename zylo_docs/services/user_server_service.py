@@ -108,6 +108,7 @@ async def get_cur_test_case(request,path, method):
     service: OpenApiService = request.app.state.openapi_service
     openapi_json = service.get_current_spec()
     result = openapi_json.get("paths", {}).get(path, {}).get(method)
+    print(result)
     if result:
         result.pop("responses", None)
     

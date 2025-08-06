@@ -34,6 +34,7 @@ class ZyloAIUserContextRequestBody(BaseModel):
     version: str = Field(..., description="Version of the spec")
     doc_type: DocTypeEnum
     user_context: Optional[str] = Field(None, description="User context for the spec")
+    
 class InviteRequestBody(BaseModel):
     emails: list[str] = Field(..., description="List of emails to invite")
 class TestCasePatchBody(BaseModel):
@@ -182,14 +183,14 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
 
 @router.patch("/testcases", include_in_schema=False)
 async def create_test_case(request: Request, body: TestCasePatchBody, credentials: HTTPAuthorizationCredentials = Depends(security)):
-    print("Creating test case")
     access_token = credentials.credentials
     path, method = body.path, body.method.lower()
     cur_test_case = await get_cur_test_case(request, path, method)
-    request_data = {"spec_data": cur_test_case, "title":"title","version":"1.0.0","doc_type":"internal"}
+    request_data = {"spec_data": cur_test_case}
+    print("실행되고있다")
     async with httpx.AsyncClient() as client:
         try:
-            resp = await client.post(f"{EXTERNAL_API_BASE}/zylo-ai/test-cases", json=request_data, headers={"Authorization": f"Bearer {access_token}"})
+            resp = await client.post(f"{EXTERNAL_API_BASE}/zylo-ai/testcases", json=request_data, headers={"Authorization": f"Bearer {access_token}"})
             resp.raise_for_status()
             return resp.json()
         except httpx.HTTPStatusError as exc:
