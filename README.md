@@ -51,13 +51,13 @@ You need to start the server using **Uvicorn**.
 
 ## [4/7] To use Zylo AI, sign up and sign in to zylo.
 <p align="center">
-  <img width="50%" alt="Screenshot 2025-07-30 at 9 04 09 AM" src="https://github.com/user-attachments/assets/9097918a-4e02-4ea8-b6de-de58f6f36bf9" />
+  <img width="50%" alt="u-4" src="https://github.com/user-attachments/assets/e7a82d4e-ae17-49e5-bea5-302867fbd58d" />
 </p>
 To enhance your documentation with AI, please sign in to zylo-docs.
 
 ## [5/7] Use the Zylo AI function to upgrade your docs
-<img width="100%" alt="zylo-docs-magic-wand" src="https://github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
-Click the `magic wand icon` in the top-right corner to activate Zylo AI, which will generate detailed descriptions and test cases for each of your API endpoints.
+<img width="100%" height="1011" alt="u-5" src="https://github.com/user-attachments/assets/6ee84c0e-9eb4-41d8-8b0f-ebd83ebb1d2a" />
+
 
 ## [6/7] Tada! Look at the red dot in the top-left corner! It is completed. Let's check this out!
 <img width="100%" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
