@@ -16,7 +16,7 @@ def set_initial_openapi_spec(app: FastAPI):
     app.state.openapi_service.set_current_spec(openapi_json)
     print(f"http://{HOST}:{PORT}/zylo-docs")
 
-def add_zylo_docs(app: FastAPI):
+def zylo_docs(app: FastAPI):
     if not hasattr(app.state, 'openapi_service'):
         app.state.openapi_service = OpenApiService()
         
@@ -31,4 +31,3 @@ def add_zylo_docs(app: FastAPI):
         return FileResponse(os.path.join(os.path.dirname(__file__), "static", "index.html"))
 
     set_initial_openapi_spec(app)
-#
