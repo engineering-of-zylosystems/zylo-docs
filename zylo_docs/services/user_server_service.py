@@ -101,3 +101,14 @@ async def get_user_operation_by_path(request, path, method):
 
     result = parse_openapi_paths_by_method(openapi_json.get("paths", {}), components, path, method)
     return result
+
+
+
+async def get_cur_test_case(request,path, method):
+    service: OpenApiService = request.app.state.openapi_service
+    openapi_json = service.get_current_spec()
+    result = openapi_json.get("paths", {}).get(path, {}).get(method)
+    if result:
+        result.pop("responses", None)
+    
+    return result 
