@@ -17,6 +17,9 @@ def set_initial_openapi_spec(app: FastAPI):
     print(f"http://{HOST}:{PORT}/zylo-docs")
 
 def zylo_docs(app: FastAPI):
+    @app.on_event("startup")
+    async def on_startup():
+        set_initial_openapi_spec(app)
     if not hasattr(app.state, 'openapi_service'):
         app.state.openapi_service = OpenApiService()
         
@@ -29,5 +32,3 @@ def zylo_docs(app: FastAPI):
     @app.get("/zylo-docs{full_path:path}", include_in_schema=False)
     async def serve_react_app():
         return FileResponse(os.path.join(os.path.dirname(__file__), "static", "index.html"))
-
-    set_initial_openapi_spec(app)
