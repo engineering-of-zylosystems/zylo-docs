@@ -10,6 +10,7 @@ from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
+from zylo_docs.services.user_server_service import get_cur_test_case, update_current_spec
 from zylo_docs.config import EXTERNAL_API_BASE
 from pydantic import BaseModel
 import logging
@@ -33,9 +34,13 @@ class ZyloAIUserContextRequestBody(BaseModel):
     version: str = Field(..., description="Version of the spec")
     doc_type: DocTypeEnum
     user_context: Optional[str] = Field(None, description="User context for the spec")
+    
 class InviteRequestBody(BaseModel):
     emails: list[str] = Field(..., description="List of emails to invite")
-    
+class TestCasePatchBody(BaseModel):
+    path: str = Field(..., description="Operation ID for the test case")
+    method: str = Field(..., description="Test case method")
+
 @router.post("/zylo-ai", include_in_schema=False)
 async def create_zylo_ai(request: Request, body: ZyloAIRequestBody, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
@@ -176,6 +181,27 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
         media_type=resp.headers.get("content-type")
     )
 
+@router.patch("/testcases", include_in_schema=False)
+async def create_test_case(request: Request, body: TestCasePatchBody, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
+    path, method = body.path, body.method.lower()
+    cur_test_case = await get_cur_test_case(request, path, method)
+    request_data = {"spec_data": cur_test_case}
+    
+    timeout = httpx.Timeout(timeout=None, connect=None, read=None, write=None)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        try:
+            resp = await client.post(f"{EXTERNAL_API_BASE}/zylo-ai/testcases", json=request_data, headers={"Authorization": f"Bearer {access_token}"})
+            resp.raise_for_status()
+            await update_current_spec(request, resp.json().get("data", {}).get("tuned_json",{}), path, method)
+            return resp.json()
+        except httpx.HTTPStatusError as exc:
+            return Response(
+                content=exc.response.content,
+                status_code=exc.response.status_code,
+                media_type=exc.response.headers.get("content-type")
+            )
+
 
 @router.post("/pivot-current-spec/{spec_id}", include_in_schema=False)
 async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -216,7 +242,6 @@ async def download_current_spec(request: Request, spec_id: str = Query(..., desc
     access_token = credentials.credentials
     service: OpenApiService = request.app.state.openapi_service
     openapi_dict = service.get_current_spec()
-    print(f"Current OpenAPI spec: {openapi_dict}")
 
     if spec_id == "original":
         return {

@@ -2,6 +2,7 @@ from fastapi import APIRouter,Query, Request,HTTPException
 from zylo_docs.services.user_server_service import get_user_operation,get_user_operation_by_path
 from zylo_docs.schemas.schema_data import SchemaResponseModel
 from zylo_docs.schemas.schema_data import APIRequestModel
+from zylo_docs.services.openapi_service import OpenApiService
 from fastapi.responses import JSONResponse
 import urllib.parse
 import httpx
@@ -55,6 +56,15 @@ async def get_operation_by_path(
         "success": True,
         "message": "Operation retrieved successfully",
         "data": result.get(method)
+    }
+@router.get("/current-spec", include_in_schema=False)
+async def get_current_spec(request: Request):
+    service: OpenApiService = request.app.state.openapi_service
+    openapi_json = service.get_current_spec()
+    return {
+        "success": True,
+        "message": "Current OpenAPI spec retrieved successfully",
+        "data": openapi_json
     }
 
 @router.post("/test-execution", include_in_schema=False)
