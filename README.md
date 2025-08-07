@@ -17,7 +17,7 @@
 ```python
 from fastapi import FastAPI
 # 👇 [1/2] Add this import at the top
-from zylo_docs.integration import zylo_docs
+from zylo_docs import zylo_docs
 
 app = FastAPI()
 
