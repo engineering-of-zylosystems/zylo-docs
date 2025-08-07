@@ -104,12 +104,33 @@ async def get_user_operation_by_path(request, path, method):
 
 
 
-async def get_cur_test_case(request,path, method):
+async def get_cur_test_case(request, path, method):
     service: OpenApiService = request.app.state.openapi_service
     openapi_json = service.get_current_spec()
     result = openapi_json.get("paths", {}).get(path, {}).get(method)
-    print(result)
     if result:
         result.pop("responses", None)
     
     return result 
+async def update_current_spec(request, new_spec, path, method):
+    service: OpenApiService = request.app.state.openapi_service
+    openapi_json = service.get_current_spec()
+    for param in openapi_json["paths"][path][method]["parameters"]:
+        if param.get("in") == "path":
+            if param.get("examples"):
+                for new_param in new_spec["parameters"]:
+                    if new_param.get("in") == "path" and new_param.get("examples"):
+                        param["examples"] = new_param["examples"]
+        if param.get("in") == "query":
+            if param.get("examples"):
+                for new_param in new_spec["parameters"]:
+                    if new_param.get("in") == "query" and new_param.get("examples"):
+                        param["examples"] = new_param["examples"]
+
+
+    if "requestBody" in openapi_json["paths"][path][method]:
+        if openapi_json["paths"][path][method]["requestBody"].get("content", {}).get("application/json", {}).get("examples"):
+            new_body_example = new_spec["requestBody"].get("content", {}).get("application/json", {}).get("examples", {})
+            openapi_json["paths"][path][method]["requestBody"]["content"]["application/json"]["examples"] = new_body_example
+    service.set_current_spec(openapi_json)
+    return 
