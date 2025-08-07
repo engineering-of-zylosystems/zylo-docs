@@ -10,7 +10,7 @@ from enum import Enum
 from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.services.hub_server_service import get_spec_content_by_id
-from zylo_docs.services.user_server_service import get_cur_test_case
+from zylo_docs.services.user_server_service import get_cur_test_case, update_current_spec
 from zylo_docs.config import EXTERNAL_API_BASE
 from pydantic import BaseModel
 import logging
@@ -187,11 +187,13 @@ async def create_test_case(request: Request, body: TestCasePatchBody, credential
     path, method = body.path, body.method.lower()
     cur_test_case = await get_cur_test_case(request, path, method)
     request_data = {"spec_data": cur_test_case}
-    print("실행되고있다")
-    async with httpx.AsyncClient() as client:
+    
+    timeout = httpx.Timeout(timeout=None, connect=None, read=None, write=None)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         try:
             resp = await client.post(f"{EXTERNAL_API_BASE}/zylo-ai/testcases", json=request_data, headers={"Authorization": f"Bearer {access_token}"})
             resp.raise_for_status()
+            await update_current_spec(request, resp.json().get("data", {}).get("tuned_json",{}), path, method)
             return resp.json()
         except httpx.HTTPStatusError as exc:
             return Response(
@@ -240,7 +242,6 @@ async def download_current_spec(request: Request, spec_id: str = Query(..., desc
     access_token = credentials.credentials
     service: OpenApiService = request.app.state.openapi_service
     openapi_dict = service.get_current_spec()
-    print(f"Current OpenAPI spec: {openapi_dict}")
 
     if spec_id == "original":
         return {
