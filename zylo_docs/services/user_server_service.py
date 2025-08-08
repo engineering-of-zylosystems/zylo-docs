@@ -115,7 +115,7 @@ async def get_cur_test_case(request, path, method):
 async def update_current_spec(request, new_spec, path, method):
     service: OpenApiService = request.app.state.openapi_service
     openapi_json = service.get_current_spec()
-    for param in openapi_json["paths"][path][method]["parameters"]:
+    for param in openapi_json["paths"][path][method].get("parameters", []):
         if param.get("in") == "path":
             if param.get("examples"):
                 for new_param in new_spec["parameters"]:

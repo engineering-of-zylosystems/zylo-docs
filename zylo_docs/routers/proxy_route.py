@@ -33,6 +33,7 @@ class ZyloAIUserContextRequestBody(BaseModel):
     title: str = Field(..., description="Title of the OpenAPI spec")
     version: str = Field(..., description="Version of the spec")
     doc_type: DocTypeEnum
+    spec_id: str = Field(..., description="Spec ID for current spec")
     user_context: Optional[str] = Field(None, description="User context for the spec")
     
 class InviteRequestBody(BaseModel):
@@ -119,6 +120,7 @@ async def create_zylo_ai_user_context(request: Request, body: ZyloAIUserContextR
             "title": body.title,
             "version": body.version,
             "doc_type": body.doc_type.value,
+            "base_spec_id": body.spec_id,
             "user_context": body.user_context
         }
         try:
