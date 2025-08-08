@@ -38,8 +38,10 @@ class ZyloAIUserContextRequestBody(BaseModel):
 class InviteRequestBody(BaseModel):
     emails: list[str] = Field(..., description="List of emails to invite")
 class TestCasePatchBody(BaseModel):
+    spec_id: str = Field(..., description="Spec ID for the test case")
     path: str = Field(..., description="Operation ID for the test case")
     method: str = Field(..., description="Test case method")
+
 
 @router.post("/zylo-ai", include_in_schema=False)
 async def create_zylo_ai(request: Request, body: ZyloAIRequestBody, credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -184,10 +186,9 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
 @router.patch("/testcases", include_in_schema=False)
 async def create_test_case(request: Request, body: TestCasePatchBody, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
-    path, method = body.path, body.method.lower()
+    spec_id, path, method = body.spec_id, body.path, body.method.lower()
     cur_test_case = await get_cur_test_case(request, path, method)
-    request_data = {"spec_data": cur_test_case}
-    
+    request_data = {"spec_data": cur_test_case, "spec_id": spec_id} 
     timeout = httpx.Timeout(timeout=None, connect=None, read=None, write=None)
     async with httpx.AsyncClient(timeout=timeout) as client:
         try:
