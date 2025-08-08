@@ -107,7 +107,7 @@ async def get_user_operation_by_path(request, path, method):
 async def get_cur_test_case(request, path, method):
     service: OpenApiService = request.app.state.openapi_service
     openapi_json = service.get_current_spec()
-    result = openapi_json.get("paths", {}).get(path, {}).get(method)
+    result = copy.deepcopy(openapi_json.get("paths", {}).get(path, {}).get(method))
     if result:
         result.pop("responses", None)
     
