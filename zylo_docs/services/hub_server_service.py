@@ -7,7 +7,6 @@ async def get_spec_content_by_id(spec_id: str, client: httpx.AsyncClient, access
         resp.raise_for_status()
         response_data = resp.json()
         spec_content = response_data.get("data", {}).get("spec_content")
-
         if not spec_content:
             raise HTTPException(status_code=404, detail="Spec content not found in the external API response.")
         return spec_content
