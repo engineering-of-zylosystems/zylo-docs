@@ -1,11 +1,12 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from .routers import front_route, proxy_route 
-from .middlewares.exception_handler import ExceptionHandlingMiddleware
+from .routers import front_route, proxy_route, proxy_need_auth_route
+from .middlewares.exception_handler import ExceptionHandlingMiddleware, verify_token
 from zylo_docs.services.openapi_service import OpenApiService 
 from zylo_docs.logging import NoZyloDocsLogFilter
+
 # 로깅 삭제하는 코드 개발 모드에서는 주석 처리
 NoZyloDocsLogFilter().setup_logging()
 HOST = os.getenv("SERVER_HOST", "localhost")
@@ -26,6 +27,7 @@ def zylo_docs(app: FastAPI):
     app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 
     app.include_router(front_route.router, prefix="/zylo-docs", tags=["front"])
+    app.include_router(proxy_need_auth_route.router, prefix="/zylo-docs/api", tags=["proxy_auth"])
     app.include_router(proxy_route.router, prefix="/zylo-docs/api", tags=["proxy"])
     app.add_middleware(ExceptionHandlingMiddleware)
 
