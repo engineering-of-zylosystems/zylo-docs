@@ -17,10 +17,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-security = HTTPBearer()
-
-
-
 router = APIRouter()
 class DocTypeEnum(str, Enum):
     internal = "internal"
