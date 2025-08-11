@@ -255,8 +255,7 @@ async def get_spec_by_id(request: Request, spec_id: str, credentials: HTTPAuthor
                 )
             
 @router.get("/download-spec", include_in_schema=False)
-async def download_current_spec(request: Request, spec_id: str = Query(..., description="OpenAPI spec ID"), credentials: HTTPAuthorizationCredentials = Depends(security)):
-    access_token = credentials.credentials
+async def download_current_spec(request: Request, spec_id: str = Query(..., description="OpenAPI spec ID")):
     service: OpenApiService = request.app.state.openapi_service
     openapi_dict = service.get_current_spec()
 
