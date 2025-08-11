@@ -185,6 +185,20 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(security)
         media_type=resp.headers.get("content-type")
     )
 
+@router.get("/base/spec/{spec_id}", include_in_schema=False)
+async def get_specs_me_by_id(spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    access_token = credentials.credentials
+    async with httpx.AsyncClient() as client:
+        try:
+            spec_content = await get_spec_content_by_id(spec_id, client, access_token, source="original")
+            return spec_content
+        except httpx.HTTPStatusError as exc:
+            return Response(
+                content=exc.response.content,
+                status_code=exc.response.status_code,
+                media_type=exc.response.headers.get("content-type")
+            )
+
 @router.patch("/testcases", include_in_schema=False)
 async def create_test_case(request: Request, body: TestCasePatchBody, credentials: HTTPAuthorizationCredentials = Depends(security)):
     access_token = credentials.credentials
