@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request,Response, HTTPException ,Depends, Query
+from fastapi import APIRouter, Request, Response, Depends, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
 import json
@@ -173,7 +173,7 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(verify_to
     access_token = credentials.credentials
     async with httpx.AsyncClient() as client:
         try:
-            resp = await client.get(f"{EXTERNAL_API_BASE}/specs/me", headers={"Authorization": f"Bearer {verify_token}"})
+            resp = await client.get(f"{EXTERNAL_API_BASE}/specs/me", headers={"Authorization": f"Bearer {access_token}"})
             resp.raise_for_status()
             return resp.json()
         except httpx.HTTPStatusError as exc:
@@ -189,13 +189,20 @@ async def get_spec(credentials: HTTPAuthorizationCredentials = Depends(verify_to
         media_type=resp.headers.get("content-type")
     )
 
-@router.get("/base/spec/{spec_id}", include_in_schema=False)
-async def get_specs_me_by_id(spec_id: str, credentials: HTTPAuthorizationCredentials = Depends(verify_token)):
+@router.post("/toggle/spec/{spec_id}", include_in_schema=False)
+async def get_specs_me_by_id(request: Request, spec_id: str, source: str = Query(...), credentials: HTTPAuthorizationCredentials = Depends(verify_token)):
     access_token = credentials.credentials
     async with httpx.AsyncClient() as client:
         try:
-            spec_content = await get_spec_content_by_id(spec_id, client, access_token, source="original")
-            return spec_content
+            spec_content = await get_spec_content_by_id(spec_id, client, access_token, source=source)
+            service: OpenApiService = request.app.state.openapi_service
+            service.set_current_spec(spec_content)
+            return JSONResponse(
+                    content={
+                        "success": True,
+                        "message": "Spec retrieved successfully",
+                    }
+                )
         except httpx.HTTPStatusError as exc:
             return Response(
                 content=exc.response.content,
