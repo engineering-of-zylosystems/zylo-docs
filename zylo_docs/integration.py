@@ -3,7 +3,7 @@ from fastapi import FastAPI,Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from .routers import front_route, proxy_route, proxy_need_auth_route
-from .middlewares.exception_handler import ExceptionHandlingMiddleware, verify_token
+from .middlewares.exception_handler import ExceptionHandlingMiddleware
 from zylo_docs.services.openapi_service import OpenApiService 
 from zylo_docs.logging import NoZyloDocsLogFilter
 
