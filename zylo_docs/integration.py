@@ -15,7 +15,19 @@ PORT = os.getenv("SERVER_PORT", "8000")
 def set_initial_openapi_spec(app: FastAPI):
     openapi_json = app.openapi()
     app.state.openapi_service.set_current_spec(openapi_json)
-    print(f"http://{HOST}:{PORT}/zylo-docs")
+
+    message = f"""
+┌───────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│  🚀 Zylo-docs is running locally!                                         │
+│                                                                           │
+│  🔗 http://{HOST}:{PORT}/zylo-docs                                       │
+│                                                                           │
+│  You can now edit your spec in your browser                               │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘
+"""
+    print(message)
 
 def zylo_docs(app: FastAPI):
     @app.on_event("startup")
