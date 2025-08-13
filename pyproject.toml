@@ -1,6 +1,6 @@
 [project]
 name = "zylib-test"
-version = "0.0.116"
+version = "0.0.117"
 
 description = "Zylo-docs seamlessly integrates with FastAPI to automatically generate OpenAPI-compliant specs—so you can write your API docs faster and go home early."
 authors = [
