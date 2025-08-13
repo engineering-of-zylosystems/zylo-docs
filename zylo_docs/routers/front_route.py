@@ -70,10 +70,21 @@ async def get_current_spec(request: Request):
 @router.post("/test-execution", include_in_schema=False)
 async def test_execution(request: Request, request_data: APIRequestModel):
     target_path = request_data.path
+    # 헤더 파싱
+    request_headers = {}
+
+    # 헤더가 input.header에 있는 경우
+    if request_data.input and getattr(request_data.input, "headers", None):
+        request_headers = request_data.input.headers or {}
+        # 문자열로 변환
+        request_headers = {k: str(v) for k, v in request_headers.items()}
+
+
     if request_data.input and request_data.input.path_params:
         for key, value in request_data.input.path_params.items():
             placeholder = f"{{{key}}}"
             target_path = target_path.replace(placeholder, str(value))
+
     # 자기 자신의 경로로 path 변경
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
     # 별도의 HTTP 서버를 실행할 필요 없이 자기 자신에게 요청을 보내기 위해 ASGITransport 사용
@@ -84,7 +95,8 @@ async def test_execution(request: Request, request_data: APIRequestModel):
                 method=request_data.method,
                 url=target_path,
                 params=request_data.input.query_params if request_data.input else None,
-                json=request_data.input.body.value if request_data.input else None
+                json=request_data.input.body.value if request_data.input else None,
+                headers=request_headers
             )
 
             # 프록시된 응답에서 헤더를 복사하되, Content-Length 및 Transfer-Encoding은 제외합니다.
