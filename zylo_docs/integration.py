@@ -8,7 +8,7 @@ from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.logging import NoZyloDocsLogFilter
 
 # 로깅 삭제하는 코드 개발 모드에서는 주석 처리
-NoZyloDocsLogFilter().setup_logging()
+# NoZyloDocsLogFilter().setup_logging()
 HOST = os.getenv("SERVER_HOST", "localhost")
 PORT = os.getenv("SERVER_PORT", "8000")
 
@@ -19,11 +19,11 @@ def set_initial_openapi_spec(app: FastAPI):
     message = f"""
 ┌───────────────────────────────────────────────────────────────────────────┐
 │                                                                           │
-│  🚀 Zylo-docs is running locally!                                         │
+│  🚀 zylo-docs is running locally!                                         │
 │                                                                           │
 │  🔗 http://{HOST}:{PORT}/zylo-docs                                       │
 │                                                                           │
-│  You can now edit your spec in your browser                               │
+│  Check your API spec using the zylo-docs web app.                         │
 │                                                                           │
 └───────────────────────────────────────────────────────────────────────────┘
 """
