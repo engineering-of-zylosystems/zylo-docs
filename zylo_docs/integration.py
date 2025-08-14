@@ -8,7 +8,7 @@ from zylo_docs.services.openapi_service import OpenApiService
 from zylo_docs.logging import NoZyloDocsLogFilter
 
 # 로깅 삭제하는 코드 개발 모드에서는 주석 처리
-NoZyloDocsLogFilter().setup_logging()
+# NoZyloDocsLogFilter().setup_logging()
 HOST = os.getenv("SERVER_HOST", "localhost")
 PORT = os.getenv("SERVER_PORT", "8000")
 

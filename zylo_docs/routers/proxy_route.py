@@ -79,7 +79,6 @@ async def proxy(request: Request, path: str):
                 params=request.query_params,
             )
             
-
         headers_to_frontend = dict(resp.headers)
         # 프론트로 보내는 응답 객체 프론트와 인터페이스를 맞춰야함
         return Response(
