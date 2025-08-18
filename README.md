@@ -58,11 +58,15 @@ To enhance your documentation with AI, please sign in to zylo-docs.
 ## [5/7] Use the Zylo AI function to upgrade your docs
 <img width="100%" height="904" alt="5:7" src="https://github.com/user-attachments/assets/87f7f783-e1c1-4437-b3ef-2eabea99477d" />
 
-
 ## [6/7] Tada! Look at the red dot in the top-left corner! It is completed. Let's check this out!
 <img width="100%" height="904" alt="6:7" src="https://github.com/user-attachments/assets/45561bb3-a4d5-4216-aa4e-c38408a6f6ab" />
 After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
+## [6.2/7] You can compare generated docs with privious one.
+https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9
+
+## [6.5/7] You can also regenerate specific parts of the data, such as test cases.
+https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085
 
 ## [7/7] Share your API docs with your team
 <img width="100%" height="905" alt="7:7" src="https://github.com/user-attachments/assets/85bd8986-617a-4a7c-8141-2098ccb14ebf" />
