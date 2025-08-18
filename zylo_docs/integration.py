@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
 load_dotenv(dotenv_path=dotenv_path)
 # 로깅 삭제하는 코드 개발 모드에서는 주석 처리
-if os.getenv("DEV") == "dev":
+if os.getenv("DEV") != "dev":
     NoZyloDocsLogFilter().setup_logging()
 HOST = os.getenv("SERVER_HOST", "localhost")
 PORT = os.getenv("SERVER_PORT", "8000")
