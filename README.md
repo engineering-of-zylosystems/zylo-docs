@@ -46,7 +46,7 @@ You need to start the server using **Uvicorn**.
 (⚠️ If your development server runs on a different port, update the URL accordingly!)
 
 ## [3/7] Tada! You can now view beautifully structured API specs with zylo-docs.
-<img width="100%" height="1011" alt="u-3" src="https://github.com/user-attachments/assets/85be5108-3a96-4043-8481-cc34ae7b79a2" />
+<img width="100%" height="904" alt="3:7" src="https://github.com/user-attachments/assets/d71a3115-6106-4881-9af8-e1e0972edec6" />
 
 
 ## [4/7] To use Zylo AI, sign up and sign in to zylo.
@@ -56,16 +56,16 @@ You need to start the server using **Uvicorn**.
 To enhance your documentation with AI, please sign in to zylo-docs.
 
 ## [5/7] Use the Zylo AI function to upgrade your docs
-<img width="100%" height="1011" alt="u-5" src="https://github.com/user-attachments/assets/6ee84c0e-9eb4-41d8-8b0f-ebd83ebb1d2a" />
+<img width="100%" height="904" alt="5:7" src="https://github.com/user-attachments/assets/87f7f783-e1c1-4437-b3ef-2eabea99477d" />
 
 
 ## [6/7] Tada! Look at the red dot in the top-left corner! It is completed. Let's check this out!
-<img width="100%" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
+<img width="100%" height="904" alt="6:7" src="https://github.com/user-attachments/assets/45561bb3-a4d5-4216-aa4e-c38408a6f6ab" />
 After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
 
 ## [7/7] Share your API docs with your team
-<img width="100%" alt="Screenshot 2025-07-30 at 9 10 47 AM" src="https://github.com/user-attachments/assets/d9d261af-1157-4f55-bc0c-e85b8885f104" />
+<img width="100%" height="905" alt="7:7" src="https://github.com/user-attachments/assets/85bd8986-617a-4a7c-8141-2098ccb14ebf" />
 
 Click the `Publish button`  to share your API documentation via email.
 
