@@ -46,7 +46,7 @@ You need to start the server using **Uvicorn**.
 (⚠️ If your development server runs on a different port, update the URL accordingly!)
 
 ## [3/7] Tada! You can now view beautifully structured API specs with zylo-docs.
-<img width="100%" height="904" alt="3:7" src="https://github.com/user-attachments/assets/d71a3115-6106-4881-9af8-e1e0972edec6" />
+<img width="100%" alt="3:7" src="https://github.com/user-attachments/assets/d71a3115-6106-4881-9af8-e1e0972edec6" />
 
 
 ## [4/7] To use Zylo AI, sign up and sign in to zylo.
@@ -62,11 +62,19 @@ To enhance your documentation with AI, please sign in to zylo-docs.
 <img width="100%" alt="6:7" src="https://github.com/user-attachments/assets/45561bb3-a4d5-4216-aa4e-c38408a6f6ab" />
 After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
-## [6.2/7] You can compare generated docs with privious one.
-https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9
+## [6.2/7] Compare the generated docs with the previous version
+<video controls muted playsinline loop style="max-width:100%; height:auto;">
+  <source src="https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9" type="video/mp4" />
+  Your browser doesn’t support embedded video. 
+  <a href="https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9">Open the video</a>.
+</video>
 
-## [6.5/7] You can also regenerate specific parts of the data, such as test cases.
-https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085
+## [6.5/7] Regenerate specific parts, such as test cases
+<video controls muted playsinline loop style="max-width:100%; height:auto;">
+  <source src="https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085" type="video/mp4" />
+  Your browser doesn’t support embedded video. 
+  <a href="https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085">Open the video</a>.
+</video>
 
 ## [7/7] Share your API docs with your team
 <img width="100%" alt="7:7" src="https://github.com/user-attachments/assets/85bd8986-617a-4a7c-8141-2098ccb14ebf" />
