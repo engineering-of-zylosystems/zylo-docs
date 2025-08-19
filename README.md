@@ -17,7 +17,7 @@
 ```python
 from fastapi import FastAPI
 # 👇 [1/2] Add this import at the top
-from zylo_docs.integration import add_zylo_docs
+from zylo_docs import zylo_docs
 
 app = FastAPI()
 
@@ -25,12 +25,12 @@ app = FastAPI()
 async def read_root():
     return {"message": "Hello, FastAPI!"}
 
-# ...
-# ...
-# ...
+...
+...
+...
 
 # 👇 [2/2] Add this at the bottom of your entry point file (e.g., main.py)
-add_zylo_docs(app)
+zylo_docs(app)
 ```
 
 
@@ -46,25 +46,30 @@ You need to start the server using **Uvicorn**.
 (⚠️ If your development server runs on a different port, update the URL accordingly!)
 
 ## [3/7] Tada! You can now view beautifully structured API specs with zylo-docs.
-<img width="100%" alt="Screenshot 2025-07-30 at 9 01 27 AM" src="https://github.com/user-attachments/assets/5d88e0ca-d5f4-4227-9c2b-aaa7dda65f78" />
+<img width="100%" height="904" alt="3:7" src="https://github.com/user-attachments/assets/d71a3115-6106-4881-9af8-e1e0972edec6" />
+
 
 ## [4/7] To use Zylo AI, sign up and sign in to zylo.
 <p align="center">
-  <img width="50%" alt="Screenshot 2025-07-30 at 9 04 09 AM" src="https://github.com/user-attachments/assets/9097918a-4e02-4ea8-b6de-de58f6f36bf9" />
+  <img width="50%" alt="u-4" src="https://github.com/user-attachments/assets/e7a82d4e-ae17-49e5-bea5-302867fbd58d" />
 </p>
 To enhance your documentation with AI, please sign in to zylo-docs.
 
 ## [5/7] Use the Zylo AI function to upgrade your docs
-<img width="100%" alt="zylo-docs-magic-wand" src="https://github.com/user-attachments/assets/249146b4-9e46-423d-90c1-c2f4c4aa3f09" />
-Click the `magic wand icon` in the top-right corner to activate Zylo AI, which will generate detailed descriptions and test cases for each of your API endpoints.
+<img width="100%" height="904" alt="5:7" src="https://github.com/user-attachments/assets/87f7f783-e1c1-4437-b3ef-2eabea99477d" />
 
 ## [6/7] Tada! Look at the red dot in the top-left corner! It is completed. Let's check this out!
-<img width="100%" alt="image" src="https://github.com/user-attachments/assets/ab1e6402-6bdc-43bc-971e-a44afac1786e" />
+<img width="100%" height="904" alt="6:7" src="https://github.com/user-attachments/assets/45561bb3-a4d5-4216-aa4e-c38408a6f6ab" />
 After you find the red dot on the version selector, it means that our API specs are now upgraded and more user-friendly with zylo-docs. you can find the lastest one. Once you click it, you can check the new one filled with rich content.
 
+## [6.2/7] You can compare generated docs with privious one.
+https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9
+
+## [6.5/7] You can also regenerate specific parts of the data, such as test cases.
+https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085
 
 ## [7/7] Share your API docs with your team
-<img width="100%" alt="Screenshot 2025-07-30 at 9 10 47 AM" src="https://github.com/user-attachments/assets/d9d261af-1157-4f55-bc0c-e85b8885f104" />
+<img width="100%" height="905" alt="7:7" src="https://github.com/user-attachments/assets/85bd8986-617a-4a7c-8141-2098ccb14ebf" />
 
 Click the `Publish button`  to share your API documentation via email.
 

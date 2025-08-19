@@ -1,16 +1,9 @@
 [project]
-
-
-name = "zylo-docs"
-version = "1.1.1"
-
-
-
-
-
-description = ""
+name = "zylib-test"
+version = "0.0.125"
+description = "Zylo-docs seamlessly integrates with FastAPI to automatically generate OpenAPI-compliant specs—so you can write your API docs faster and go home early."
 authors = [
-    {name = "lee gyu yeol-mac",email = "i1004gy@gmail.com"}
+    {name = "zylosystems",email = "engineering@zylosystems.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.10"
