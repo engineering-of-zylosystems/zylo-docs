@@ -303,26 +303,13 @@ async def get_project_members(dummy_id: str, spec_id: str, body: InviteRequestBo
                 }
             )
 
-    try:
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.post(
-                f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite",
-                headers={"Authorization": f"Bearer {access_token}"},
-                json={"emails": emails}
-            )
-            resp.raise_for_status()
-            return JSONResponse(status_code=200, content=resp.json())
-
-    except httpx.HTTPStatusError as exc:
-        logger.warning(f"HTTP error during invite: {exc}")
-        return JSONResponse(
-            status_code=exc.response.status_code,
-            content={
-                "success": False,
-                "message": "Failed to send invitations.",
-                "error": {
-                    "code": "INVITE_FAILED",
-                    "details": exc.response.text
-                }
-            }
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        resp = await client.post(
+            f"{EXTERNAL_API_BASE}/projects/{project_id}/specs/{spec_id}/invite",
+            headers={"Authorization": f"Bearer {access_token}"},
+            json={"emails": emails}
         )
+        resp.raise_for_status()
+        return JSONResponse(status_code=200, content=resp.json())
+
+
