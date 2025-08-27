@@ -8,30 +8,38 @@ import urllib.parse
 import httpx
 
 router = APIRouter()
-@router.get("/operation", response_model=SchemaResponseModel, include_in_schema=False)
-async def get_operation(request: Request):
-    try:
-        result = await get_user_operation(request)
-        if not result["operationGroups"]:
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "success": False,
-                    "message": "Operation not found",
-                    "data": {
-                        "code": "OPERATION_NOT_FOUND",
-                        "details": "No operation found with operationId 'invalidId'"
-                    }
-                }
-            )
+@router.get("/openapi.json", include_in_schema=False)
+async def get_openapi_json(request: Request):
+    openapi = request.app.openapi()
+    return{
+        "success": True,
+        "message": "OpenAPI JSON retrieved successfully",
+        "data":openapi
+    }
+# @router.get("/operation", response_model=SchemaResponseModel, include_in_schema=False)
+# async def get_operation(request: Request):
+#     try:
+#         result = await get_user_operation(request)
+#         if not result["operationGroups"]:
+#             raise HTTPException(
+#                 status_code=404,
+#                 detail={
+#                     "success": False,
+#                     "message": "Operation not found",
+#                     "data": {
+#                         "code": "OPERATION_NOT_FOUND",
+#                         "details": "No operation found with operationId 'invalidId'"
+#                     }
+#                 }
+#             )
 
-        return {
-            "success": True,
-            "message": "All operation listed",
-            "data": result
-        }
-    except Exception as e:
-        raise ValueError(f"Unexpected error: {e}")
+#         return {
+#             "success": True,
+#             "message": "All operation listed",
+#             "data": result
+#         }
+#     except Exception as e:
+#         raise ValueError(f"Unexpected error: {e}")
 
 @router.get("/operation/by-path", include_in_schema=False)
 async def get_operation_by_path(
