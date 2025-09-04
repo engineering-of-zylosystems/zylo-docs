@@ -5,4 +5,4 @@ from dotenv import load_dotenv
 dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
 load_dotenv(dotenv_path=dotenv_path)
 
-EXTERNAL_API_BASE = os.getenv("EXTERNAL_API_BASE", "https://api.zylosystems.com/v1")
+EXTERNAL_API_BASE = os.getenv("EXTERNAL_API_BASE", "https://v2-api.zylosystems.com/v1")
