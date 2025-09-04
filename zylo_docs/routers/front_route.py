@@ -97,7 +97,6 @@ async def test_execution(request: Request, request_data: APIRequestModel):
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
 
     target_path = urllib.parse.urljoin(str(request.base_url), target_path)
-    print(target_path)
     # 자기 자신의 api 호출
     transport = httpx.ASGITransport(app=request.app)
     async with httpx.AsyncClient(transport=transport) as client:
