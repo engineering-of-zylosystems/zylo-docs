@@ -1,23 +1,13 @@
-from fastapi import APIRouter, Request,Response, HTTPException ,Depends, Query
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Request,Response, Query
 from typing import Optional
-import json
 import httpx
-from io import BytesIO
 from pydantic import BaseModel, Field
 from enum import Enum
-from fastapi.responses import JSONResponse
 from zylo_docs.services.openapi_service import OpenApiService
-from zylo_docs.services.hub_server_service import get_spec_content_by_id
-from zylo_docs.services.user_server_service import get_cur_test_case, update_current_spec
 from zylo_docs.config import EXTERNAL_API_BASE
 from pydantic import BaseModel
 import logging
 logger = logging.getLogger(__name__)
-
-
-
-
 
 router = APIRouter()
 class DocTypeEnum(str, Enum):
