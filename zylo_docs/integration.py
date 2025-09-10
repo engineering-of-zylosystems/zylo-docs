@@ -17,8 +17,8 @@ if os.getenv("DEV") != "dev":
     NoZyloDocsLogFilter().setup_logging()
 
 def _get_server_info():
-    host = os.getenv("SERVER_HOST", "localhost")
-    port = os.getenv("SERVER_PORT", "8000")
+    host = "localhost"
+    port = "8000"
 
     try:
         # uvicorn main:app --host 0.0.0.0 --port 8081
