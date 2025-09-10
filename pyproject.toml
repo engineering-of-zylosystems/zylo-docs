@@ -1,6 +1,6 @@
 [project]
-name = "zylib-test"
-version = "1.2.2"
+name = "zylo-docs"
+version = "1.1.5"
 description = "Zylo-docs seamlessly integrates with FastAPI to automatically generate OpenAPI-compliant specs—so you can write your API docs faster and go home early."
 authors = [
     {name = "zylosystems",email = "engineering@zylosystems.com"}
