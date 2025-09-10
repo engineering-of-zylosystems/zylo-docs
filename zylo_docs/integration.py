@@ -1,4 +1,5 @@
 import os
+import sys
 from fastapi import FastAPI,Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -14,19 +15,35 @@ load_dotenv(dotenv_path=dotenv_path)
 # 로깅 삭제하는 코드 개발 모드에서는 주석 처리
 if os.getenv("DEV") != "dev":
     NoZyloDocsLogFilter().setup_logging()
-HOST = os.getenv("SERVER_HOST", "localhost")
-PORT = os.getenv("SERVER_PORT", "8000")
+
+def _get_server_info():
+    host = os.getenv("SERVER_HOST", "localhost")
+    port = os.getenv("SERVER_PORT", "8000")
+
+    try:
+        # uvicorn main:app --host 0.0.0.0 --port 8081
+        # sys.argv will be ['.../uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '8081']
+        if "--host" in sys.argv:
+            host = sys.argv[sys.argv.index("--host") + 1]
+        if "--port" in sys.argv:
+            port = sys.argv[sys.argv.index("--port") + 1]
+    except (ValueError, IndexError):
+        pass  # Ignore if parsing fails, stick to defaults
+    
+    return host, str(port)
 
 def set_initial_openapi_spec(app: FastAPI):
     openapi_json = app.openapi()
     app.state.openapi_service.set_current_spec(openapi_json)
+    
+    host, port = _get_server_info()
 
     message = f"""
 ┌───────────────────────────────────────────────────────────────────────────┐
 │                                                                           │
 │  🚀 zylo-docs is running locally!                                         │
 │                                                                           │
-│  🔗 http://{HOST}:{PORT}/zylo-docs                                       │
+│  🔗 http://{host}:{port}/zylo-docs                                       │
 │                                                                           │
 │  Check your API spec using the zylo-docs web app.                         │
 │                                                                           │
