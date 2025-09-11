@@ -26,7 +26,7 @@ def _get_server_info():
         if "--port" in sys.argv:
             port = sys.argv[sys.argv.index("--port") + 1]
     except (ValueError, IndexError):
-        pass  # Ignore if parsing fails, stick to defaults
+        pass 
     
     return host, str(port)
 
