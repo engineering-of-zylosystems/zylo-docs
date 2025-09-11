@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import FastAPI,Depends, HTTPException
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from .routers import front_route, proxy_route, proxy_need_auth_route
@@ -21,8 +21,6 @@ def _get_server_info():
     port = "8000"
 
     try:
-        # uvicorn main:app --host 0.0.0.0 --port 8081
-        # sys.argv will be ['.../uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '8081']
         if "--host" in sys.argv:
             host = sys.argv[sys.argv.index("--host") + 1]
         if "--port" in sys.argv:
