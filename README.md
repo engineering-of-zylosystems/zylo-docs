@@ -60,7 +60,10 @@ You need to start the server using **Uvicorn**.
 To enhance your documentation with AI, please sign in to zylo-docs.
 
 ## [5/10] Provide context to the zylo-docs AI
-
+Context example
+```
+Our pet store is called "Patricia", and the pet_id represents the registered number of the pet. This should be reflected in the API specs.
+```
 <img width="100%" alt="Screenshot 2025-09-26 at 11 11 00 AM" src="https://github.com/user-attachments/assets/f0252159-e72a-4f24-8d9b-a8ae5fc58478" />
 
 Describe how you would like zylo-docs to enrich the document.
@@ -78,19 +81,11 @@ After you find the red dot on the version selector, it means that our API specs 
 ## [8/10] Compare the generated docs with the previous version
 
 
-<video controls muted playsinline loop style="max-width:100%; height:auto;">
-  <source src="https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9" type="video/mp4" />
-  Your browser doesn’t support embedded video. 
-  <a href="https://github.com/user-attachments/assets/58370b53-d98c-4cb5-8cd3-b628dd48c1e9">Open the video</a>.
-</video>
+![479237845-58370b53-d98c-4cb5-8cd3-b628dd48c1e9-_2_](https://github.com/user-attachments/assets/f1b5452e-8ce4-46a2-85ce-88bdb48de7a5)
 
 ## [9/10] Regenerate specific parts, such as test cases
 
-<video controls muted playsinline loop style="max-width:100%; height:auto;">
-  <source src="https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085" type="video/mp4" />
-  Your browser doesn’t support embedded video. 
-  <a href="https://github.com/user-attachments/assets/34a0eee7-364e-4572-9930-440c00db7085">Open the video</a>.
-</video>
+![479238033-34a0eee7-364e-4572-9930-440c00db7085](https://github.com/user-attachments/assets/092730ef-8bd2-4af4-aaed-829d15d85e1f)
 
 ## [10/10] Share your API docs with your team
 
@@ -98,7 +93,10 @@ After you find the red dot on the version selector, it means that our API specs 
 
 Click the `Publish button` to share your API documentation via email.
 - Note : Use authentication to test the token.
-  <img width="100%" alt="image" src="https://github.com/user-attachments/assets/2e8a6cfc-100f-481d-ba6b-ac872ac53205" />
+  -  Use x-api by entering the key name and key value
+  -  Use HTTP Bearer by entering the Bearer token value.
+  <img width="1917" height="1013" alt="Frame 9 (1)" src="https://github.com/user-attachments/assets/99d547c9-d3fe-44d5-9a6d-258801e68991" />
+
 
 ## Development
 
