@@ -51,7 +51,7 @@ You need to start the server using **Uvicorn**.
 
 ## [3/10] Tada! You can now view beautifully structured API specs with zylo-docs.
 
-<img width="100%" alt="3:7" src="https://github.com/user-attachments/assets/d71a3115-6106-4881-9af8-e1e0972edec6" />
+<img width="100%" alt="3:7 alt="Screenshot 2025-09-26 at 10 50 34 AM" src="https://github.com/user-attachments/assets/9460aee7-1cc6-4656-b558-fcb1190ea9db" />
 
 ## [4/10] To use Zylo AI, sign up and sign in to zylo.
 
