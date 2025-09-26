@@ -80,12 +80,13 @@ After you find the red dot on the version selector, it means that our API specs 
 
 ## [8/10] Compare the generated docs with the previous version
 
+<img width="100%" src="https://github.com/user-attachments/assets/8b168555-f5fc-4117-b4c4-4ebf4979b8d7"/>
 
-![479237845-58370b53-d98c-4cb5-8cd3-b628dd48c1e9-_2_](https://github.com/user-attachments/assets/f1b5452e-8ce4-46a2-85ce-88bdb48de7a5)
 
 ## [9/10] Regenerate specific parts, such as test cases
 
-![479238033-34a0eee7-364e-4572-9930-440c00db7085](https://github.com/user-attachments/assets/092730ef-8bd2-4af4-aaed-829d15d85e1f)
+<img width="100%" src="https://github.com/user-attachments/assets/18780cb7-c513-4acf-9d31-80900c585a52" />
+
 
 ## [10/10] Share your API docs with your team
 
