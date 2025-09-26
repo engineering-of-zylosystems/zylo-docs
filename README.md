@@ -96,7 +96,7 @@ Click the `Publish button` to share your API documentation via email.
 - Note : Use authentication to test the token.
   -  Use x-api by entering the key name and key value
   -  Use HTTP Bearer by entering the Bearer token value.
-  <img width="1917" height="1013" alt="Frame 9 (1)" src="https://github.com/user-attachments/assets/99d547c9-d3fe-44d5-9a6d-258801e68991" />
+  <img width="100%" src="https://github.com/user-attachments/assets/99d547c9-d3fe-44d5-9a6d-258801e68991" />
 
 
 ## Development
